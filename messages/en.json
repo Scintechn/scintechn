@@ -1,0 +1,282 @@
+{
+  "nav": {
+    "about": "Why Choose Us",
+    "whatWeDo": "Solutions",
+    "ourProjects": "Results",
+    "contact": "Contact Us"
+  },
+  "hero": {
+    "title": "Increase Your Revenue with Smart WhatsApp Customer Service",
+    "subtitle": "Automate processes, serve more customers, and sell 24/7 without growing your team",
+    "cta": "Boost My Sales Now",
+    "scroll": "Scroll to see more",
+    "stats": {
+      "response": "Instant Response",
+      "availability": "24/7 Service",
+      "increase": "Sales Increase"
+    }
+  },
+  "about": {
+    "title": "Why Your Business Needs Automation Now",
+    "description": "Small and medium businesses lose up to 40% of sales opportunities due to slow response times. Our solution ensures you never lose a customer again.",
+    "benefits": {
+      "revenue": {
+        "title": "More Revenue",
+        "description": "Serve multiple customers simultaneously and increase sales by up to 300%"
+      },
+      "efficiency": {
+        "title": "Lower Costs",
+        "description": "Reduce operational costs by up to 60% by automating repetitive tasks"
+      },
+      "satisfaction": {
+        "title": "Happy Customers",
+        "description": "Instant 24/7 response increases satisfaction and loyalty"
+      }
+    }
+  },
+  "services": {
+    "title": "Solutions that Deliver Real Results",
+    "subtitle": "Everything your business needs to grow digitally",
+    "popular": "Most Popular",
+    "learnMore": "Learn more →",
+    "items": {
+      "whatsapp": {
+        "title": "Smart WhatsApp Service",
+        "description": "Intelligent bot that serves, qualifies, and converts leads automatically"
+      },
+      "automation": {
+        "title": "Process Automation",
+        "description": "Automate scheduling, billing, follow-ups, and much more"
+      },
+      "integration": {
+        "title": "Complete Integration",
+        "description": "Connect your WhatsApp with your CRM, online store, and systems"
+      }
+    }
+  },
+  "results": {
+    "title": "Real Businesses, Real Results",
+    "subtitle": "Small and medium businesses like yours are already earning more with our solution",
+    "cta": "I Want Results Like These →",
+    "cases": {
+      "dental": {
+        "name": "Dental Clinic",
+        "result": "+250% in appointments",
+        "metric": "150 → 525 patients/month"
+      },
+      "clothing": {
+        "name": "Online Clothing Store",
+        "result": "+180% in sales",
+        "metric": "$3k → $8.4k/month"
+      },
+      "restaurant": {
+        "name": "Delivery Restaurant",
+        "result": "+300% in orders",
+        "metric": "200 → 800 orders/month"
+      },
+      "gym": {
+        "name": "Fitness Gym",
+        "result": "+85% in memberships",
+        "metric": "50 → 92 members/month"
+      },
+      "salon": {
+        "name": "Beauty Salon",
+        "result": "+200% in revenue",
+        "metric": "$2k → $6k/month"
+      },
+      "realestate": {
+        "name": "Real Estate Agency",
+        "result": "+150% in visits",
+        "metric": "40 → 100 visits/month"
+      }
+    }
+  },
+  "contact": {
+    "title": "Ready to Grow?",
+    "subtitle": "Talk to a specialist and discover how much your company can save and earn",
+    "name": "Your Name",
+    "email": "Your Email",
+    "phone": "WhatsApp",
+    "message": "Tell us about your business",
+    "send": "Get Free Consultation",
+    "guarantee": "✓ No commitment  ✓ Response within 2 hours"
+  },
+  "metadata": {
+    "title": "Scintechn | Smart WhatsApp Service and Automation for Small Businesses",
+    "description": "Increase your sales by up to 300% with automated WhatsApp service. Complete solution for small and medium businesses. Start free!"
+  },
+  "whatsapp": {
+    "online": "Online",
+    "title": "Need Help?",
+    "subtitle": "Talk to a specialist now!",
+    "cta": "Start Conversation",
+    "prefilledMessage": "Hello! I'd like to know more about WhatsApp automation for my business."
+  },
+  "trustBadges": {
+    "businesses": "Businesses Served",
+    "messages": "Messages Sent",
+    "responseTime": "Response Time",
+    "uptime": "Uptime"
+  },
+  "testimonials": {
+    "title": "What Our Customers Say",
+    "subtitle": "Real stories from businesses that transformed their customer service",
+    "testimonial1": {
+      "name": "Dr. Maria Silva",
+      "business": "Perfect Smile Clinic",
+      "text": "We tripled our appointments in 2 months. The bot responds instantly and patients love it!"
+    },
+    "testimonial2": {
+      "name": "Carlos Mendes",
+      "business": "Homemade Flavor Restaurant",
+      "text": "We used to lose many orders at night. Now the bot serves 24/7 and we increased revenue by 300%!"
+    },
+    "testimonial3": {
+      "name": "Juliana Costa",
+      "business": "Bella Studio",
+      "text": "Automation changed my business! Less time on phone, more time with clients and $6k/month."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Get all your questions answered about our solution",
+    "q1": {
+      "question": "How does WhatsApp automation work?",
+      "answer": "We install an intelligent bot on your WhatsApp Business that automatically responds to messages, qualifies leads, schedules appointments, and much more. Everything works 24/7 without you having to do anything."
+    },
+    "q2": {
+      "question": "Do I need to change my WhatsApp number?",
+      "answer": "No! We keep your current number. We handle all integration without interrupting your service."
+    },
+    "q3": {
+      "question": "How long does implementation take?",
+      "answer": "Complete implementation in up to 7 business days. You start seeing results from the first week."
+    },
+    "q4": {
+      "question": "What if my customers don't like the bot?",
+      "answer": "Our bot is designed to seem human and can transfer to human support at any time. Satisfaction rate: 98%."
+    },
+    "q5": {
+      "question": "Does it work for any type of business?",
+      "answer": "Yes! We serve clinics, restaurants, stores, gyms, salons, real estate agencies, and more. We customize for your niche."
+    },
+    "q6": {
+      "question": "Can I cancel anytime?",
+      "answer": "Yes, no penalties or fees. But we have a 30-day guarantee - if you don't like it, we refund 100% of your money."
+    },
+    "stillHaveQuestions": "Still have questions?",
+    "contactUs": "Talk to Our Team"
+  },
+  "pricing": {
+    "title": "Plans for Every Stage of Your Business",
+    "subtitle": "Choose the ideal plan and start earning more today",
+    "mostPopular": "Most Popular",
+    "perMonth": "per month",
+    "moneyBack": "🛡️ 30-day unconditional guarantee - Satisfaction guaranteed or your money back",
+    "starter": {
+      "name": "Starter",
+      "price": "$59",
+      "description": "To start automating",
+      "feature1": "Up to 1,000 messages/month",
+      "feature2": "Bot with automatic replies",
+      "feature3": "Basic reports",
+      "feature4": "Email support",
+      "cta": "Get Started"
+    },
+    "growth": {
+      "name": "Growth",
+      "price": "$139",
+      "description": "To grow strong",
+      "feature1": "Up to 5,000 messages/month",
+      "feature2": "Advanced bot + AI",
+      "feature3": "CRM integration",
+      "feature4": "Complete automation",
+      "feature5": "Priority 24/7 support",
+      "cta": "Grow Now"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Custom",
+      "description": "Tailored solution",
+      "feature1": "Unlimited messages",
+      "feature2": "Multi-agent support",
+      "feature3": "Custom API",
+      "feature4": "Deep learning chatbot",
+      "feature5": "Dedicated account manager",
+      "feature6": "Guaranteed SLA",
+      "cta": "Talk to Specialist"
+    }
+  },
+  "roiCalculator": {
+    "title": "Calculate How Much You're Losing",
+    "subtitle": "See in real-time how much your business can save and profit",
+    "customersPerDay": "How many customers do you serve per day?",
+    "customers": "customers/day",
+    "lostPercentage": "What % do you lose due to slow response?",
+    "lost": "lost",
+    "avgCustomerValue": "What's your average customer value?",
+    "youAreLosing": "You're losing",
+    "perMonth": "per month",
+    "automationCost": "Automation cost",
+    "yourSavings": "Your monthly savings",
+    "cta": "Stop Losing Money",
+    "guarantee": "✓ Implementation in 7 days  ✓ Results guaranteed"
+  },
+  "beforeAfter": {
+    "title": "The Transformation is Real",
+    "subtitle": "See the before and after of implementing our solution",
+    "beforeTitle": "Before",
+    "beforeSubtitle": "Without automation",
+    "before": {
+      "item1": "Lost customers due to slow response",
+      "item2": "Overworked and stressed team",
+      "item3": "No service outside business hours",
+      "item4": "Stagnant or declining sales",
+      "item5": "High operational costs"
+    },
+    "afterTitle": "After",
+    "afterSubtitle": "With automation",
+    "after": {
+      "item1": "Instant 24/7 response for everyone",
+      "item2": "Team focused on strategic tasks",
+      "item3": "Service and sales happening always",
+      "item4": "Constant growth of 150-300%",
+      "item5": "60% reduction in costs"
+    },
+    "cta": "Get This Transformation"
+  },
+  "guarantee": {
+    "title": "Total Satisfaction Guarantee",
+    "period": "30 Days",
+    "description": "Test our solution for 30 days risk-free. If it doesn't increase your sales, we refund 100% of your investment.",
+    "benefit1": "Complete deployment with no extra costs",
+    "benefit2": "Team training included",
+    "benefit3": "Dedicated support throughout",
+    "benefit4": "No fine print or tricks",
+    "promise": "Our promise is simple: either you sell more and stay satisfied, or we refund your money. No questions, no bureaucracy.",
+    "cta": "Start Risk-Free",
+    "noQuestions": "Simple cancellation, no questions"
+  },
+  "leadMagnet": {
+    "badge": "100% Free",
+    "title": "Free Guide: How to Triple Your WhatsApp Sales",
+    "subtitle": "Download our complete guide and discover strategies big companies use",
+    "whatYouGet": "What you'll receive:",
+    "resource1": "PDF guide with 20+ pages of strategies",
+    "resource2": "Ready-to-implement checklist",
+    "resource3": "Proven message templates",
+    "resource4": "Bonus: Free 30-minute consultation",
+    "formTitle": "Get It Free Now",
+    "formSubtitle": "No commitment, no credit card",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your full name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "cta": "Download Free Guide",
+    "sending": "Sending...",
+    "privacy": "🔒 Your data is safe. We never send spam.",
+    "successTitle": "Sent!",
+    "successMessage": "Check your email! We sent the guide and free consultation bonus.",
+    "disclaimer": "Over 500 businesses have downloaded this guide and increased their sales"
+  }
+}
