@@ -59,14 +59,14 @@ export default function Services() {
               className="relative"
             >
               {service.highlight && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10 bg-primary text-white hover:bg-primary-dark">
+                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10 bg-[#90469b] text-white hover:bg-[#7a3a83]">
                   {t('popular')}
                 </Badge>
               )}
-              <Card className={`h-full hover:shadow-2xl transition-all ${
+              <Card className={`h-full shadow-sm hover:shadow-xl transition-all ${
                 service.highlight
-                  ? 'border-primary ring-4 ring-primary/20'
-                  : 'border-gray-200 hover:border-primary'
+                  ? 'border-[#90469b] ring-4 ring-[#90469b]/20'
+                  : 'border-gray-200 hover:border-[#90469b]'
               }`}>
                 <CardHeader>
                   <div className="text-6xl mb-4">{service.icon}</div>
@@ -80,8 +80,8 @@ export default function Services() {
                     href="#contact"
                     className={`inline-block font-semibold ${
                       service.highlight
-                        ? 'text-primary hover:text-primary-dark'
-                        : 'text-gray-600 hover:text-primary'
+                        ? 'text-[#90469b] hover:text-[#7a3a83]'
+                        : 'text-gray-600 hover:text-[#90469b]'
                     }`}
                   >
                     {t('learnMore')}

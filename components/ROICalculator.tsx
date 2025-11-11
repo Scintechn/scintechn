@@ -21,7 +21,7 @@ export default function ROICalculator() {
   const roi = Math.round((savings / automationCost) * 100);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-primary to-secondary" ref={ref}>
+    <section className="py-20 bg-gradient-to-br from-purple-600 via-[#90469b] to-purple-800" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -38,7 +38,7 @@ export default function ROICalculator() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               {/* Inputs */}
               <div className="space-y-6">
@@ -55,7 +55,7 @@ export default function ROICalculator() {
                     className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                   <div className="text-center mt-2">
-                    <span className="text-4xl font-bold text-primary">{customers}</span>
+                    <span className="text-4xl font-bold text-[#90469b]">{customers}</span>
                     <span className="text-gray-600 ml-2">{t('customers')}</span>
                   </div>
                 </div>
@@ -73,7 +73,7 @@ export default function ROICalculator() {
                     className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                   <div className="text-center mt-2">
-                    <span className="text-4xl font-bold text-primary">{lostPercent}%</span>
+                    <span className="text-4xl font-bold text-[#90469b]">{lostPercent}%</span>
                     <span className="text-gray-600 ml-2">{t('lost')}</span>
                   </div>
                 </div>
@@ -92,7 +92,7 @@ export default function ROICalculator() {
                     className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                   <div className="text-center mt-2">
-                    <span className="text-4xl font-bold text-primary">R$ {avgValue}</span>
+                    <span className="text-4xl font-bold text-[#90469b]">R$ {avgValue}</span>
                   </div>
                 </div>
               </div>
@@ -131,7 +131,7 @@ export default function ROICalculator() {
             <div className="text-center">
               <a
                 href="#contact"
-                className="inline-block bg-primary text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-primary-dark transition-all hover:scale-105 shadow-xl"
+                className="inline-block bg-[#90469b] text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-[#7a3a83] transition-all hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 {t('cta')} →
               </a>

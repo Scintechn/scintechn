@@ -57,7 +57,7 @@ export default function Testimonials() {
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border-2 border-gray-200 hover:border-primary transition-all"
+              className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border-2 border-gray-200 hover:border-[#90469b] transition-all"
             >
               <div className="flex items-center mb-4">
                 <div className="text-5xl mr-4">{testimonial.image}</div>

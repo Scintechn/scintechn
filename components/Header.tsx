@@ -54,7 +54,7 @@ export default function Header() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`font-medium transition-colors hover:text-primary ${
+                  className={`font-medium transition-colors hover:text-[#90469b] ${
                     isScrolled ? 'text-gray-800' : 'text-white'
                   }`}
                 >
@@ -68,7 +68,7 @@ export default function Header() {
               <Link
                 href="/pt"
                 className={`px-3 py-1 rounded ${
-                  locale === 'pt' ? 'bg-primary text-white' : isScrolled ? 'text-gray-800' : 'text-white'
+                  locale === 'pt' ? 'bg-[#90469b] text-white' : isScrolled ? 'text-gray-800' : 'text-white'
                 }`}
               >
                 PT
@@ -76,7 +76,7 @@ export default function Header() {
               <Link
                 href="/en"
                 className={`px-3 py-1 rounded ${
-                  locale === 'en' ? 'bg-primary text-white' : isScrolled ? 'text-gray-800' : 'text-white'
+                  locale === 'en' ? 'bg-[#90469b] text-white' : isScrolled ? 'text-gray-800' : 'text-white'
                 }`}
               >
                 EN
@@ -114,10 +114,10 @@ export default function Header() {
                 </li>
               ))}
               <li className="flex space-x-2 pt-2">
-                <Link href="/pt" className="px-4 py-2 rounded bg-primary text-white">
+                <Link href="/pt" className="px-4 py-2 rounded bg-[#90469b] text-white">
                   PT
                 </Link>
-                <Link href="/en" className="px-4 py-2 rounded bg-primary text-white">
+                <Link href="/en" className="px-4 py-2 rounded bg-[#90469b] text-white">
                   EN
                 </Link>
               </li>

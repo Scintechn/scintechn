@@ -112,7 +112,7 @@ export default function BeforeAfter() {
         >
           <a
             href="#contact"
-            className="inline-block bg-primary text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-primary-dark transition-all hover:scale-105 shadow-xl"
+            className="inline-block bg-[#90469b] text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-[#7a3a83] transition-all hover:scale-105 shadow-lg hover:shadow-xl"
           >
             {t('cta')} →
           </a>

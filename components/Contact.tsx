@@ -54,7 +54,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-br from-primary to-secondary" ref={ref}>
+    <section id="contact" className="py-20 bg-gradient-to-br from-purple-600 via-[#90469b] to-purple-800" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -69,7 +69,7 @@ export default function Contact() {
             {t('subtitle')}
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
+          <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
             <div className="mb-6">
               <label htmlFor="name" className="block text-gray-900 font-semibold mb-2 text-sm">
                 {t('name')}
@@ -78,7 +78,7 @@ export default function Contact() {
                 {...register('name', { required: 'Name is required' })}
                 type="text"
                 id="name"
-                className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition placeholder:text-gray-500"
+                className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#90469b] focus:border-[#90469b] outline-none transition placeholder:text-gray-500"
                 placeholder={t('name')}
               />
               {errors.name && (
@@ -100,7 +100,7 @@ export default function Contact() {
                 })}
                 type="email"
                 id="email"
-                className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition placeholder:text-gray-500"
+                className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#90469b] focus:border-[#90469b] outline-none transition placeholder:text-gray-500"
                 placeholder={t('email')}
               />
               {errors.email && (
@@ -127,7 +127,7 @@ export default function Contact() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-primary text-white py-5 rounded-lg font-bold text-lg hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:scale-[1.02]"
+              className="w-full bg-[#90469b] text-white py-5 rounded-lg font-bold text-lg hover:bg-[#7a3a83] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:scale-[1.02]"
             >
               {isSubmitting ? 'Enviando...' : t('send')}
             </button>

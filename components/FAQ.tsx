@@ -48,13 +48,13 @@ export default function FAQ() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all text-left border-2 border-gray-200 hover:border-primary"
+                className="w-full bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all text-left border-2 border-gray-200 hover:border-[#90469b]"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-gray-900 pr-4">
                     {faq.question}
                   </h3>
-                  <span className="text-2xl text-primary flex-shrink-0">
+                  <span className="text-2xl text-[#90469b] flex-shrink-0">
                     {openIndex === index ? '−' : '+'}
                   </span>
                 </div>
@@ -77,7 +77,7 @@ export default function FAQ() {
           <p className="text-gray-600 mb-4">{t('stillHaveQuestions')}</p>
           <a
             href="#contact"
-            className="inline-block bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary-dark transition-all hover:scale-105 shadow-xl"
+            className="inline-block bg-[#90469b] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#7a3a83] transition-all hover:scale-105 shadow-lg hover:shadow-xl"
           >
             {t('contactUs')}
           </a>

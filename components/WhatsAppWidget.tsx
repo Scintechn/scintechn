@@ -17,7 +17,7 @@ export default function WhatsAppWidget() {
       {/* Floating Button */}
       <div className="fixed bottom-6 right-6 z-50">
         {isOpen && (
-          <div className="mb-4 bg-white rounded-2xl shadow-2xl p-6 w-80 animate-fade-in">
+          <div className="mb-4 bg-white rounded-2xl shadow-xl p-6 w-80 animate-fade-in">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-2xl">
                 💬
@@ -50,7 +50,7 @@ export default function WhatsAppWidget() {
 
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl hover:scale-110 transition-all relative"
+          className="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-110 transition-all relative"
           aria-label="Open WhatsApp"
         >
           <svg

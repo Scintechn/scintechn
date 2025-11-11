@@ -7,7 +7,7 @@ export default function Hero() {
   const t = useTranslations('hero');
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-purple-600 to-secondary overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-[#90469b] to-purple-800 overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob" />
@@ -48,7 +48,7 @@ export default function Hero() {
           >
             <a
               href="#contact"
-              className="inline-block bg-white text-primary px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 shadow-2xl"
+              className="inline-block bg-white text-[#90469b] px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-50 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
             >
               {t('cta')} →
             </a>

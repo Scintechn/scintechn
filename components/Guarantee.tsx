@@ -17,7 +17,7 @@ export default function Guarantee() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-primary to-secondary" ref={ref}>
+    <section className="py-20 bg-gradient-to-br from-purple-600 via-[#90469b] to-purple-800" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -25,7 +25,7 @@ export default function Guarantee() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto"
         >
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12">
             <div className="text-center mb-8">
               <motion.div
                 initial={{ scale: 0 }}
@@ -76,7 +76,7 @@ export default function Guarantee() {
                 </p>
                 <a
                   href="#contact"
-                  className="inline-block bg-primary text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-primary-dark transition-all hover:scale-105 shadow-xl"
+                  className="inline-block bg-[#90469b] text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-[#7a3a83] transition-all hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   {t('cta')} →
                 </a>

@@ -75,7 +75,7 @@ export default function Projects() {
               animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="h-full hover:shadow-2xl transition-all border-2 border-gray-200 hover:border-primary group">
+              <Card className="h-full shadow-sm hover:shadow-xl transition-all border-2 border-gray-200 hover:border-[#90469b] group">
                 <CardHeader>
                   <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
                   <CardTitle className="text-lg font-semibold text-gray-600">{item.business}</CardTitle>
@@ -99,7 +99,7 @@ export default function Projects() {
         >
           <a
             href="#contact"
-            className="inline-block bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary-dark transition-all hover:scale-105 shadow-xl"
+            className="inline-block bg-[#90469b] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#7a3a83] transition-all hover:scale-105 shadow-lg hover:shadow-xl"
           >
             {t('cta')}
           </a>

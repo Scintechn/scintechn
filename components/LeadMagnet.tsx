@@ -92,7 +92,7 @@ export default function LeadMagnet() {
               initial={{ opacity: 0, x: 50 }}
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-2xl p-8"
+              className="bg-gradient-to-br from-purple-600 via-[#90469b] to-purple-800 rounded-2xl shadow-xl p-8"
             >
               {!submitted ? (
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -137,7 +137,7 @@ export default function LeadMagnet() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-white text-primary py-4 px-6 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-white text-[#90469b] py-4 px-6 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all hover:scale-105 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? t('sending') : t('cta')}
                   </button>

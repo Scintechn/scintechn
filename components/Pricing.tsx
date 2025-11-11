@@ -80,12 +80,12 @@ export default function Pricing() {
               transition={{ duration: 0.8, delay: index * 0.2 }}
               className={`relative bg-white rounded-2xl shadow-lg p-8 border-2 transition-all ${
                 plan.popular
-                  ? 'border-primary ring-4 ring-primary/20 scale-105'
-                  : 'border-gray-200 hover:border-primary'
+                  ? 'border-[#90469b] ring-4 ring-[#90469b]/20 scale-105'
+                  : 'border-gray-200 hover:border-[#90469b]'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary text-white px-6 py-1 rounded-full text-sm font-bold">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#90469b] text-white px-6 py-1 rounded-full text-sm font-bold">
                   {t('mostPopular')}
                 </div>
               )}
@@ -93,7 +93,7 @@ export default function Pricing() {
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                 <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
-                <div className="text-5xl font-bold text-primary mb-2">{plan.price}</div>
+                <div className="text-5xl font-bold text-[#90469b] mb-2">{plan.price}</div>
                 {plan.price !== t('enterprise.price') && (
                   <p className="text-gray-600 text-sm">{t('perMonth')}</p>
                 )}
@@ -112,7 +112,7 @@ export default function Pricing() {
                 href="#contact"
                 className={`block w-full text-center py-4 px-6 rounded-lg font-bold transition-all ${
                   plan.popular
-                    ? 'bg-primary text-white hover:bg-primary-dark shadow-lg hover:shadow-xl hover:scale-105'
+                    ? 'bg-[#90469b] text-white hover:bg-[#7a3a83] shadow-md hover:shadow-lg hover:scale-105'
                     : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                 }`}
               >

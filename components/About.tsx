@@ -43,7 +43,7 @@ export default function About() {
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
               transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
-              className="p-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl hover:shadow-2xl transition-all border-2 border-gray-200 hover:border-primary group"
+              className="p-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-gray-200 hover:border-[#90469b] group"
             >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
               <h3 className="text-2xl font-bold mb-3 text-gray-900">{item.title}</h3>
