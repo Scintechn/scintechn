@@ -1,64 +1,62 @@
-# Scintechn - Corporate Website
+# Scintechn
 
-Modern, responsive corporate website for Scintechn, built with Next.js 15, TypeScript, and Tailwind CSS.
+Marketing site for **Scintechn** — an AI software house. We design, build and ship AI-powered SaaS products. Delivery-led, worldwide.
 
-## Features
+Built with Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, and next-intl.
 
-- 🌍 **Bilingual** (Portuguese/English) with next-intl
-- ⚡ **Next.js 15** with App Router and Server Components
-- 🎨 **Tailwind CSS** for styling
-- ✨ **Framer Motion** animations
-- 📧 **Contact form** with Nodemailer
-- 🔍 **SEO optimized** with metadata and structured data
-- 📱 **Fully responsive** design
-- 🚀 **Image & Font optimization**
+🌐 **scintechn.com**
 
-## Getting Started
+## What we build
 
-### Prerequisites
+The portfolio rendered on the site:
 
-- Node.js 18+
-- npm or yarn
+| Product | Vertical | Live |
+|---|---|---|
+| **FlowDeski** | White-label business OS | [flowdeski.com](https://flowdeski.com) |
+| **Rentfy** | Proptech — landlord management | [getrentfy.com](https://www.getrentfy.com) |
+| **Rio Patinação** | Sports operations + public site | [riopatinacao.com](https://www.riopatinacao.com) |
+| **Carna26 Rio** | Consumer events / Carnival 2026 | [carna26-rio.vercel.app](https://carna26-rio.vercel.app/discover) |
+| **Mayway** | EdTech — English school | [mayway.vercel.app](https://mayway.vercel.app/en) |
 
-### Installation
+## Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **UI**: Tailwind CSS + shadcn/ui (New York, Lucide icons)
+- **i18n**: next-intl 3 — EN default, PT secondary, `localePrefix: always`
+- **Animations**: Framer Motion
+- **Forms**: React Hook Form
+- **Email**: Nodemailer over SMTP
+- **Analytics**: Google Tag Manager (`GTM-KPXTTSRQ`) via `next/script`
+
+## Getting started
 
 ```bash
-# Install dependencies
+# Install
 npm install
 
-# Create environment file
+# Configure environment
 cp .env.example .env.local
 # Edit .env.local with your SMTP credentials
 
-# Run development server
+# Run
 npm run dev
 ```
 
-Open [http://localhost:3000/pt](http://localhost:3000/pt) or [http://localhost:3000/en](http://localhost:3000/en)
+Open [http://localhost:3000](http://localhost:3000) — bare `/` redirects to `/en`. PT version at [http://localhost:3000/pt](http://localhost:3000/pt).
 
-### Build for Production
+If port 3000 is occupied, Next picks the next free port — check the dev log for the actual URL.
+
+## Production
 
 ```bash
 npm run build
 npm start
 ```
 
-## Project Structure
+## Environment variables
 
-```
-├── app/
-│   ├── [locale]/        # Localized routes
-│   ├── api/contact/     # Contact form API
-│   └── globals.css      # Global styles
-├── components/          # React components
-├── i18n/               # Internationalization config
-├── messages/           # Translation files
-└── public/             # Static assets
-```
-
-## Environment Variables
-
-Required variables in `.env.local`:
+Required for the contact API. See `.env.example`.
 
 ```env
 SMTP_HOST=smtp.gmail.com
@@ -68,20 +66,42 @@ SMTP_PASSWORD=your-app-password
 RECIPIENT_EMAIL=contact@scintechn.com
 ```
 
-## Tech Stack
+Gmail requires an **App Password**, not the account password.
 
-- **Framework**: Next.js 15
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Forms**: React Hook Form
-- **i18n**: next-intl
-- **Email**: Nodemailer
+## Project structure
 
-## License
+```
+app/
+├── [locale]/         # /en + /pt routes
+│   ├── layout.tsx    # GTM, fonts, JSON-LD, metadata
+│   ├── page.tsx      # Hero → Work → HowWeWork → About → Contact
+│   └── opengraph-image.tsx
+├── api/contact/      # SMTP-backed contact form (rate-limited, honeypot)
+└── globals.css       # shadcn HSL variables — purple-on-white theme
 
-Private - All rights reserved
+components/
+├── Header.tsx · Hero.tsx · Work.tsx · HowWeWork.tsx
+├── About.tsx · Contact.tsx · Footer.tsx
+└── ui/               # shadcn primitives
+
+i18n/request.ts       # Locale config (default: 'en')
+messages/{en,pt}.json # EN is master, PT mirrors
+middleware.ts         # next-intl negative-lookahead matcher
+```
+
+See [`CLAUDE.md`](./CLAUDE.md) for architecture details and conventions.
+
+## Legal
+
+**Scint Technologia Serviços Ltda** · CNPJ 36.955.612/0001-85
 
 ## Contact
 
-For inquiries, visit [scintechn.com](https://scintechn.com)
+- Email: [contact@scintechn.com](mailto:contact@scintechn.com)
+- WhatsApp: [+55 11 96911-1424](https://wa.me/5511969111424)
+- LinkedIn: [in/scintylla](https://www.linkedin.com/in/scintylla/)
+- Instagram: [@scintechn](https://www.instagram.com/scintechn/)
+
+## License
+
+Private — all rights reserved.

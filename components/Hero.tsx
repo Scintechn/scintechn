@@ -2,31 +2,44 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 export default function Hero() {
   const t = useTranslations('hero');
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-[#90469b] to-purple-800 overflow-hidden">
-      {/* Background Animation */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob" />
-        <div className="absolute top-40 right-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000" />
-        <div className="absolute bottom-20 left-40 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000" />
-      </div>
+    <section className="relative min-h-[88vh] flex items-center overflow-hidden bg-background pt-24">
+      {/* Subtle radial purple glow, light-touch */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 50% at 80% 0%, hsl(var(--primary) / 0.10), transparent 60%), radial-gradient(ellipse 50% 40% at 0% 100%, hsl(var(--primary) / 0.06), transparent 60%)',
+        }}
+      />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center text-white max-w-5xl mx-auto"
+          transition={{ duration: 0.7 }}
+          className="max-w-4xl"
         >
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-8"
+          >
+            {t('eyebrow')}
+          </motion.span>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-merriweather leading-tight"
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground font-merriweather leading-[1.05] tracking-tight"
           >
             {t('title')}
           </motion.h1>
@@ -34,8 +47,8 @@ export default function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl mb-8 text-gray-100 leading-relaxed"
+            transition={{ duration: 0.7, delay: 0.35 }}
+            className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-10"
           >
             {t('subtitle')}
           </motion.p>
@@ -43,62 +56,25 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mb-12"
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-3"
           >
             <a
               href="#contact"
-              className="inline-block bg-white text-[#90469b] px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-50 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
             >
-              {t('cta')} →
+              {t('primaryCta')}
+              <ArrowRight className="h-4 w-4" />
             </a>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
-          >
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-              <div className="text-4xl font-bold mb-2">⚡</div>
-              <div className="text-sm font-semibold">{t('stats.response')}</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-              <div className="text-4xl font-bold mb-2">24/7</div>
-              <div className="text-sm font-semibold">{t('stats.availability')}</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-              <div className="text-4xl font-bold mb-2">+300%</div>
-              <div className="text-sm font-semibold">{t('stats.increase')}</div>
-            </div>
+            <a
+              href="#work"
+              className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3.5 text-sm font-semibold text-foreground transition-all hover:border-primary/40 hover:text-primary"
+            >
+              {t('secondaryCta')}
+            </a>
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-      >
-        <a href="#about" className="flex flex-col items-center text-white opacity-75 hover:opacity-100 transition">
-          <span className="text-sm mb-2">{t('scroll')}</span>
-          <svg
-            className="w-6 h-6 animate-bounce"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-          </svg>
-        </a>
-      </motion.div>
     </section>
   );
 }

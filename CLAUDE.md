@@ -4,175 +4,71 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Scintechn corporate website - a modern Next.js application with TypeScript, Tailwind CSS, and internationalization (Portuguese/English). The site focuses on digital solutions and business automation services.
+Marketing site for **Scintechn** (scintechn.com) — an AI software house. Single-page Next.js 15 App Router site with bilingual content (**EN default for worldwide audience, PT secondary**) and a contact form backed by SMTP email. Legal entity: Scint Technologia Serviços Ltda · CNPJ 36.955.612/0001-85.
 
-**Tech Stack**: Next.js 15 (App Router), TypeScript, Tailwind CSS, Framer Motion, next-intl
-**Site Domain**: scintechn.com
+## Commands
+
+```bash
+npm run dev      # Next dev server on http://localhost:3000 (redirects to /en)
+npm run build    # Production build
+npm start        # Serve the production build
+npm run lint     # next lint (eslint-config-next)
+```
+
+No test framework is configured — there are no `test`/`vitest`/`jest` scripts.
+
+Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/pt`. Bare `/` returns a 307 redirect to `/en`. If a stale `next dev` process is squatting on a port, Next will pick the next free one (3001, 3002, …) — always confirm the actual port from the dev log before testing.
+
+## Environment
+
+`.env.local` is required for the contact API to work. See `.env.example`. Variables consumed by `app/api/contact/route.ts`:
+
+- `SMTP_HOST`, `SMTP_PORT` (defaults: smtp.gmail.com:465, secure SSL)
+- `SMTP_USER`, `SMTP_PASSWORD` (Gmail requires an App Password, not the account password)
+- `RECIPIENT_EMAIL` (falls back to `SMTP_USER` if unset)
 
 ## Architecture
 
-### Next.js App Router Structure
-```
-app/
-├── [locale]/          # Internationalized routes (pt, en)
-│   ├── layout.tsx     # Root layout with fonts, GTM, structured data
-│   ├── page.tsx       # Home page (all sections)
-│   └── opengraph-image.tsx  # Dynamic OG image
-├── api/
-│   └── contact/
-│       └── route.ts   # Contact form API endpoint
-├── globals.css        # Global Tailwind styles + custom animations
-└── sitemap.ts         # Dynamic sitemap generation
+### Routing & i18n
+- App Router with a single dynamic locale segment: `app/[locale]/{layout,page,opengraph-image}.tsx`. The home page composes every section component; there are no other routes besides `/api/contact` and `/sitemap.xml`.
+- Supported locales are declared in `i18n/request.ts` (`['pt', 'en'] as const`) and consumed by `middleware.ts` and `next.config.ts` (`createNextIntlPlugin('./i18n/request.ts')`).
+- Default locale is **`'en'`** in both `i18n/request.ts` and `middleware.ts`. `localePrefix: 'always'` — every URL must carry `/en` or `/pt`.
+- Middleware matcher is the canonical next-intl negative-lookahead pattern: `['/((?!api|_next|_vercel|.*\\..*).*)']` — runs middleware on all routes EXCEPT `/api/*`, `/_next/*`, `/_vercel/*`, and any path with a dot extension (so `sitemap.xml`, `robots.txt`, `favicon.ico`, opengraph images all bypass middleware).
+- Translation strings live in `messages/{en,pt}.json`. **EN is the master copy**; PT mirrors it. Adding a key requires touching **both** files with identical key trees — `next-intl` will throw at runtime if a key is missing in one locale. Verify parity with: `diff <(jq -S 'paths|join(".")' messages/en.json) <(jq -S 'paths|join(".")' messages/pt.json)`.
+- Server components call `getTranslations({ locale, namespace })`; client components call `useTranslations(namespace)`. Locale params are async (`params: Promise<{ locale: string }>`) — Next 15 convention.
 
-components/            # React components
-├── Header.tsx         # Sticky navigation with language switcher
-├── Hero.tsx           # Animated hero section with gradient
-├── About.tsx          # About section with feature cards
-├── Services.tsx       # Services grid
-├── Projects.tsx       # Project showcase grid
-├── Contact.tsx        # Contact form with React Hook Form
-└── Footer.tsx         # Footer with social links
+### Component layer
+- Page sections are imported and stacked in `app/[locale]/page.tsx`. Current order: `Header → Hero → Work → HowWeWork → About → Contact → Footer`. The page also renders a skip-to-main-content link before the header. Reordering or removing one means editing that page file.
+- Most section components are `'use client'` because they use Framer Motion scroll animations (`useInView`) or form state. Server components are limited to layout/page/metadata files.
+- `components/ui/` is **shadcn/ui** (New York style, neutral base, Lucide icons — see `components.json`). Add new primitives via `npx shadcn@latest add <name>` rather than hand-rolling.
+- Path alias `@/*` maps to the repo root (see `tsconfig.json`). Standard imports: `@/components/...`, `@/components/ui/...`, `@/lib/utils`, `@/hooks/use-toast`.
+- `lib/utils.ts` exports `cn()` (clsx + tailwind-merge) — use it for conditional class composition.
+- The portfolio (`Work.tsx`) hard-codes the 5 product card metadata (URL + stack chips); the rest of the card copy comes from translations under the `work.items.*` namespace. Adding a product means editing both `Work.tsx` and both translation files.
 
-i18n/
-└── request.ts         # next-intl configuration
+### Styling
+- Tailwind is wired to shadcn HSL CSS variables defined in `app/globals.css` (`:root` and `.dark` blocks). `tailwind.config.ts` references them as `hsl(var(--primary))` etc.
+- **Theme: white surface, near-black text, single purple accent.** `--primary` is `hsl(270 60% 44%)` (~7.7:1 contrast on white, AAA). Purple is reserved for CTAs, focused links, and highlights — body uses `--background` / `--foreground` / `--muted-foreground`. Don't introduce gradient backgrounds or full-bleed brand colors; the design relies on minimalism with one accent.
+- `tailwind.config.ts` still has a legacy hardcoded `primary.dark: '#3d42a0'` token from the old blue theme. It's not referenced anywhere; safe to remove if you touch the file.
+- Dark-mode HSL variables are defined but the site does not toggle dark mode — no theme switcher is wired up.
+- Custom keyframes (`fadeIn`) live in `globals.css`, not the Tailwind config.
+- Fonts: Roboto (sans, default) and Merriweather (serif, used for headings) loaded via `next/font/google` in `app/[locale]/layout.tsx` and exposed as `--font-roboto` / `--font-merriweather` Tailwind variables.
 
-messages/              # Translation files
-├── pt.json           # Portuguese translations
-└── en.json           # English translations
-```
+### Forms & API
+- Contact form (`components/Contact.tsx`) uses **React Hook Form** (no Zod resolver — validation is built into RHF's `register` rules with translated error messages). POSTs to `/api/contact`.
+- API route validates required fields, enforces max lengths (name 200, email 254, message 5000), strips CRLF from values used in SMTP headers (header-injection protection), and HTML-escapes values used in the email body (XSS protection). Sends through Nodemailer; returns 400 on validation failure, 413 on length, 500 on send failure.
+- **No rate limiting** — anyone on the internet can POST. Add Vercel KV throttle, Cloudflare Turnstile, or similar before the site goes wide.
 
-### Key Features
+### SEO / Analytics
+- Metadata is generated per-locale in `app/[locale]/layout.tsx` (`generateMetadata` reads the `metadata` namespace) and re-exported per-page in `page.tsx`. `metadataBase` and `alternates.languages` are set so OG/canonical URLs resolve correctly.
+- The root layout injects: GTM container `GTM-KPXTTSRQ`, an Organization JSON-LD block (with EN/PT in `availableLanguage`), and a noscript GTM iframe. Update the GTM ID and JSON-LD `description` there.
+- `app/sitemap.ts` generates the sitemap; `app/[locale]/opengraph-image.tsx` produces the dynamic OG image. The OG image is rendered server-side (edge runtime) and currently hardcodes English copy — it does not localize per route.
 
-1. **Internationalization (i18n)**
-   - Uses `next-intl` for translations
-   - Locale prefix routing: `/pt/`, `/en/`
-   - Translations in `messages/` directory
-   - Automatic locale detection via middleware
+## Reference docs in repo
 
-2. **Animations**
-   - Framer Motion for scroll-triggered animations
-   - Custom CSS animations for hero section (blob animation)
-   - Smooth scroll behavior for anchor navigation
+`_backup_static/_docs_pre_repositioning/` (`MIGRATION.md`, `CONTRAST_FIXES.md`, `TRANSLATION_FIXES.md`) describe the **pre-repositioning** static-HTML → Next.js conversion and refer to components that no longer exist (TrustBadges, ROICalculator, Pricing, FAQ, LeadMagnet, Testimonials, etc.). Treat them as historical only — do not use them as guidance for current work. `_backup_static/` itself holds the original static HTML; do not modify or import from it.
 
-3. **Form Handling**
-   - React Hook Form for client-side validation
-   - API route at `app/api/contact/route.ts`
-   - Nodemailer for email sending
-   - Proper error handling and user feedback
+## Repo conventions
 
-4. **SEO & Performance**
-   - Server components by default
-   - Automatic image optimization with Next.js Image
-   - Google Fonts optimization (Roboto, Merriweather)
-   - OpenGraph images
-   - Structured data (JSON-LD)
-   - Dynamic sitemap generation
-   - GTM integration for analytics
-
-## Development Commands
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Run linter
-npm run lint
-```
-
-The dev server runs on `http://localhost:3000`
-- Portuguese: `http://localhost:3000/pt`
-- English: `http://localhost:3000/en`
-
-## Environment Variables
-
-Create `.env.local` file (see `.env.example`):
-
-```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-app-specific-password
-RECIPIENT_EMAIL=contact@scintechn.com
-```
-
-**Important**: Never commit `.env.local` to version control. Use app-specific passwords for Gmail, not your account password.
-
-## Component Architecture
-
-### Server Components (Default)
-- `app/[locale]/page.tsx` - Main page
-- `app/[locale]/layout.tsx` - Root layout
-- All metadata generation
-
-### Client Components ('use client')
-- `Header.tsx` - Needs useState for menu toggle, scroll detection
-- `Hero.tsx` - Framer Motion animations
-- `About.tsx`, `Services.tsx`, `Projects.tsx` - Scroll animations
-- `Contact.tsx` - Form state management
-- `Footer.tsx` - Interactive elements
-
-## Styling Approach
-
-- **Tailwind CSS**: Utility-first for rapid development
-- **Custom colors**: Defined in `tailwind.config.ts`
-  - `primary`: #4e54c8 (brand blue)
-  - `secondary`: #8f94fb (lighter blue)
-- **Font variables**: CSS variables for Roboto (sans) and Merriweather (serif)
-- **Responsive**: Mobile-first with Tailwind breakpoints (sm, md, lg, xl)
-
-## Common Development Tasks
-
-### Adding New Content Section
-1. Create component in `components/`
-2. Add translations to `messages/pt.json` and `messages/en.json`
-3. Import and add to `app/[locale]/page.tsx`
-4. Update navigation links in `Header.tsx` if needed
-
-### Modifying Translations
-Edit files in `messages/` directory:
-- `pt.json` - Portuguese
-- `en.json` - English
-
-### Updating Contact Form
-1. **Add field**: Edit `components/Contact.tsx` - add to `FormData` type and form JSX
-2. **API handling**: Modify `app/api/contact/route.ts` to process new field
-3. **Email template**: Update HTML template in API route
-
-### Changing Colors/Branding
-1. Update `tailwind.config.ts` for color palette
-2. Modify logo references in `Header.tsx` and `Footer.tsx`
-3. Update gradient in `Hero.tsx` component
-
-### SEO Updates
-- **Metadata**: Edit `app/[locale]/layout.tsx` - `generateMetadata()` function
-- **Structured data**: Modify JSON-LD in layout head
-- **Translations**: Update `messages/{locale}.json` - `metadata` namespace
-
-## Email Configuration
-
-The contact form uses Nodemailer with SMTP:
-- Configure via environment variables
-- For Gmail: Enable 2FA and use App Password
-- Email template in `app/api/contact/route.ts` includes HTML styling
-- Form validation prevents empty/invalid submissions
-
-## Important Notes
-
-1. **Image Optimization**: Always use `next/image` component, images in `public/` directory
-2. **Font Loading**: Configured in layout with `next/font/google` for optimal performance
-3. **Middleware**: Handles locale detection and routing - see `middleware.ts`
-4. **Static Assets**: Place in `public/` directory (images, fonts, favicon)
-5. **Build Output**: Next.js generates optimized static pages where possible
-
-## Backup
-
-Original static HTML files are preserved in `_backup_static/` directory for reference.
+- The default branch is `main`. `.github/workflows/` contains a Claude PR assistant + review workflow.
+- `package-lock.json` is checked in; this is an npm project, not yarn/pnpm.
+- React 18 + Next 15 — be careful copying patterns from RSC examples written for React 19 (e.g., `use()` hook).

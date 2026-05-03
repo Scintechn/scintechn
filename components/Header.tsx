@@ -15,48 +15,46 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
+    { href: '#work', label: t('work') },
+    { href: '#how-we-work', label: t('howWeWork') },
     { href: '#about', label: t('about') },
-    { href: '#what-we-do', label: t('whatWeDo') },
-    { href: '#our-projects', label: t('ourProjects') },
     { href: '#contact', label: t('contact') },
   ];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'
+        isScrolled
+          ? 'bg-background/85 backdrop-blur-md border-b border-border'
+          : 'bg-transparent'
       }`}
     >
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href={`/${locale}`} className="relative h-12 w-44">
+          <Link href={`/${locale}`} className="relative h-10 w-36 flex-none">
             <Image
-              src={isScrolled ? '/images/logo-default-362x90.png' : '/images/logo-inverse-362x90.png'}
+              src="/images/logo-default-362x90.png"
               alt="Scintechn"
               fill
-              className="object-contain"
+              className="object-contain object-left"
               priority
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <ul className="hidden lg:flex items-center space-x-8">
+          <ul className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`font-medium transition-colors hover:text-[#90469b] ${
-                    isScrolled ? 'text-gray-800' : 'text-white'
-                  }`}
+                  className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
                 >
                   {link.label}
                 </a>
@@ -64,61 +62,83 @@ export default function Header() {
             ))}
 
             {/* Language Switcher */}
-            <li className="flex items-center space-x-2">
-              <Link
-                href="/pt"
-                className={`px-3 py-1 rounded ${
-                  locale === 'pt' ? 'bg-[#90469b] text-white' : isScrolled ? 'text-gray-800' : 'text-white'
-                }`}
-              >
-                PT
-              </Link>
+            <li className="flex items-center gap-1 rounded-full border border-border p-0.5">
               <Link
                 href="/en"
-                className={`px-3 py-1 rounded ${
-                  locale === 'en' ? 'bg-[#90469b] text-white' : isScrolled ? 'text-gray-800' : 'text-white'
+                className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-colors ${
+                  locale === 'en'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 EN
+              </Link>
+              <Link
+                href="/pt"
+                className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-colors ${
+                  locale === 'pt'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                PT
               </Link>
             </li>
           </ul>
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2"
+            className="lg:hidden p-2 -mr-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
-            <div className="space-y-2">
-              <span className={`block w-8 h-0.5 ${isScrolled ? 'bg-gray-800' : 'bg-white'}`} />
-              <span className={`block w-8 h-0.5 ${isScrolled ? 'bg-gray-800' : 'bg-white'}`} />
-              <span className={`block w-8 h-0.5 ${isScrolled ? 'bg-gray-800' : 'bg-white'}`} />
+            <div className="space-y-1.5">
+              <span className="block w-6 h-0.5 bg-foreground" />
+              <span className="block w-6 h-0.5 bg-foreground" />
+              <span className="block w-6 h-0.5 bg-foreground" />
             </div>
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4">
-            <ul className="space-y-4">
+          <div id="mobile-menu" className="lg:hidden mt-4 pb-2">
+            <ul className="space-y-1">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className={`block font-medium ${isScrolled ? 'text-gray-800' : 'text-white'}`}
+                    className="block py-3 text-base font-medium text-foreground/80 hover:text-primary"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.label}
                   </a>
                 </li>
               ))}
-              <li className="flex space-x-2 pt-2">
-                <Link href="/pt" className="px-4 py-2 rounded bg-[#90469b] text-white">
-                  PT
-                </Link>
-                <Link href="/en" className="px-4 py-2 rounded bg-[#90469b] text-white">
+              <li className="flex gap-2 pt-3">
+                <Link
+                  href="/en"
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-full ${
+                    locale === 'en'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border border-border text-muted-foreground'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   EN
+                </Link>
+                <Link
+                  href="/pt"
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-full ${
+                    locale === 'pt'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border border-border text-muted-foreground'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  PT
                 </Link>
               </li>
             </ul>

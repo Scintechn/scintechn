@@ -6,13 +6,13 @@ export default createMiddleware({
   locales,
 
   // Used when no locale matches
-  defaultLocale: 'pt',
+  defaultLocale: 'en',
 
   // Always use prefix for locale (e.g., /pt/about, /en/about)
   localePrefix: 'always'
 });
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(pt|en)/:path*']
+  // Match all paths except Next.js internals, API routes, and static assets
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };

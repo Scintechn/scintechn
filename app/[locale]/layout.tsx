@@ -1,8 +1,11 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { Roboto, Merriweather } from 'next/font/google';
+import Script from 'next/script';
 import type { Metadata } from 'next';
 import '../globals.css';
+
+const GTM_ID = 'GTM-KPXTTSRQ';
 
 const roboto = Roboto({
   weight: ['100', '300', '400', '500', '700', '900'],
@@ -30,21 +33,30 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
-    keywords: 'digital solutions, automation, business efficiency, innovation, web development, consulting',
+    keywords:
+      'AI software house, AI agency, custom AI development, AI SaaS, agentic AI, software delivery, BDD, Next.js, Brazil, worldwide',
     authors: [{ name: 'Scintechn' }],
+    metadataBase: new URL('https://scintechn.com'),
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        en: '/en',
+        pt: '/pt',
+      },
+    },
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: 'https://scintechn.com',
+      url: `https://scintechn.com/${locale}`,
       siteName: 'Scintechn',
-      locale: locale,
+      locale: locale === 'pt' ? 'pt_BR' : 'en_US',
       type: 'website',
       images: [
         {
           url: '/images/logo-default-362x90.png',
           width: 362,
           height: 90,
-          alt: 'Scintechn Logo',
+          alt: 'Scintechn — AI Software House',
         },
       ],
     },
@@ -52,8 +64,6 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: t('title'),
       description: t('description'),
-      site: '@scintech',
-      creator: '@scintech',
     },
     robots: {
       index: true,
@@ -65,9 +75,6 @@ export async function generateMetadata({
         'max-image-preview': 'large',
         'max-snippet': -1,
       },
-    },
-    verification: {
-      google: 'google-site-verification-code',
     },
   };
 }
@@ -86,15 +93,13 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <head>
         <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','GTM-KPXTTSRQ');`
-          }}
-        />
+        <Script id="gtm-init" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -102,17 +107,16 @@ export default async function LocaleLayout({
               '@context': 'https://schema.org',
               '@type': 'Organization',
               name: 'Scintechn',
+              alternateName: 'Scintech Services',
               url: 'https://scintechn.com',
               logo: 'https://scintechn.com/images/logo-default-362x90.png',
-              sameAs: [
-                'https://facebook.com/scintech',
-                'https://twitter.com/scintech',
-                'https://linkedin.com/company/scintech',
-              ],
+              description:
+                'AI software house. We design, build and ship AI-powered SaaS products — from requirement to working software, in weeks.',
               contactPoint: {
                 '@type': 'ContactPoint',
                 email: 'contact@scintechn.com',
-                contactType: 'customer service',
+                contactType: 'sales',
+                availableLanguage: ['en', 'pt'],
               },
             }),
           }}
@@ -121,7 +125,7 @@ export default async function LocaleLayout({
       <body className={`${roboto.variable} ${merriweather.variable} antialiased`}>
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-KPXTTSRQ"
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
             height="0"
             width="0"
             style={{ display: 'none', visibility: 'hidden' }}

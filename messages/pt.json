@@ -1,282 +1,129 @@
 {
   "nav": {
-    "about": "Por Que Escolher",
-    "whatWeDo": "Soluções",
-    "ourProjects": "Resultados",
-    "contact": "Fale Conosco"
+    "work": "Projetos",
+    "howWeWork": "Como entregamos",
+    "about": "Sobre",
+    "contact": "Contato"
   },
   "hero": {
-    "title": "Aumente seu Faturamento com Atendimento Inteligente no WhatsApp",
-    "subtitle": "Automatize processos, atenda mais clientes e venda 24/7 sem aumentar sua equipe",
-    "cta": "Quero Aumentar Minhas Vendas",
-    "scroll": "Role para ver mais",
-    "stats": {
-      "response": "Resposta Instantânea",
-      "availability": "Atendimento 24 Horas",
-      "increase": "Aumento em Vendas"
+    "eyebrow": "AI Software House",
+    "title": "Do requisito ao software funcionando — em semanas.",
+    "subtitle": "Desenhamos, construímos e entregamos produtos SaaS com IA. Liderado por entrega, não por vendas.",
+    "primaryCta": "Iniciar um projeto",
+    "secondaryCta": "Ver nossos projetos"
+  },
+  "work": {
+    "eyebrow": "Projetos selecionados",
+    "title": "O que estamos construindo",
+    "subtitle": "Produtos reais em mercados reais — em proptech, edtech, operações esportivas, eventos e SaaS white-label.",
+    "viewLive": "Ver ao vivo",
+    "inDevelopment": "Em desenvolvimento",
+    "items": {
+      "flowdeski": {
+        "name": "FlowDeski",
+        "vertical": "SaaS white-label de gestão",
+        "tagline": "Foque no negócio, não na agenda.",
+        "description": "SaaS multi-tenant para empresas de serviço: agenda, cobrança, mensagens via WhatsApp, conteúdo gerado por IA e regras de automação — personalizável por nicho."
+      },
+      "rentfy": {
+        "name": "Rentfy",
+        "vertical": "Proptech",
+        "tagline": "Gestão de imóveis, simplificada.",
+        "description": "Plataforma de gestão para proprietários: cobrança automática de aluguel, CRM de inquilinos, lembretes de pagamento e assistente de IA."
+      },
+      "riopatinacao": {
+        "name": "Rio Patinação",
+        "vertical": "Operações esportivas",
+        "tagline": "Site público + dashboard operacional de 16 módulos.",
+        "description": "Construímos tanto o site público da escola quanto a plataforma operacional interna — alunos, turmas, pagamentos, frequência, contratos — sustentada por uma suíte completa de testes de aceitação BDD/Gherkin."
+      },
+      "carna26": {
+        "name": "Carna26 Rio",
+        "vertical": "Eventos e consumo",
+        "tagline": "Encontre seu bloco.",
+        "description": "App de descoberta de eventos e matching social para o Carnaval do Rio 2026, com tiers premium via Stripe e um pipeline de dados em Python a partir de fontes oficiais do Carnaval."
+      },
+      "mayway": {
+        "name": "Mayway",
+        "vertical": "EdTech",
+        "tagline": "Fale inglês com confiança.",
+        "description": "Plataforma de inglês em estágio inicial para alunos brasileiros e portugueses, com professores nativos e experiência tri-lingual (EN / pt-BR / pt-PT)."
+      }
+    }
+  },
+  "howWeWork": {
+    "eyebrow": "Como entregamos",
+    "title": "Entrega previsível, escrita.",
+    "subtitle": "Protegemos o seu tempo, o seu orçamento e o seu escopo tratando os requisitos como especificações testáveis — não como slides.",
+    "pillars": {
+      "scope": {
+        "title": "Requisitos como testes",
+        "description": "Cada item de escopo é um cenário BDD. Se passa, vai para produção. Se não passa, sabemos no primeiro dia — não no dia do lançamento."
+      },
+      "cadence": {
+        "title": "Cadência de sprint de duas semanas",
+        "description": "Primeira fatia funcionando em duas semanas. Demos semanais. Você pode mudar a direção a cada sprint sem renegociar contrato."
+      },
+      "stack": {
+        "title": "Stack moderna AI-native",
+        "description": "Next.js, TypeScript, PostgreSQL e Vercel AI SDK com OpenRouter — testados em produção em todos os produtos do nosso portfólio."
+      },
+      "ownership": {
+        "title": "O código é seu",
+        "description": "Acesso ao repositório desde o dia um, conventional commits, CI transparente. Sem caixa-preta, sem aprisionamento, sem fatura-surpresa de handover."
+      }
     }
   },
   "about": {
-    "title": "Por Que Sua Empresa Precisa de Automação Agora",
-    "description": "Pequenas e médias empresas perdem até 40% das oportunidades de venda por demora no atendimento. Nossa solução garante que você nunca mais perca um cliente.",
-    "benefits": {
-      "revenue": {
-        "title": "Mais Receita",
-        "description": "Atenda mais clientes simultaneamente e aumente suas vendas em até 300%"
-      },
-      "efficiency": {
-        "title": "Menos Custos",
-        "description": "Reduza custos operacionais em até 60% automatizando tarefas repetitivas"
-      },
-      "satisfaction": {
-        "title": "Clientes Felizes",
-        "description": "Resposta imediata 24/7 aumenta a satisfação e fidelização"
-      }
-    }
-  },
-  "services": {
-    "title": "Soluções que Geram Resultados Reais",
-    "subtitle": "Tudo que sua empresa precisa para crescer no digital",
-    "popular": "Mais Popular",
-    "learnMore": "Saber mais →",
-    "items": {
-      "whatsapp": {
-        "title": "Atendimento WhatsApp Inteligente",
-        "description": "Bot inteligente que atende, qualifica e converte leads automaticamente"
-      },
-      "automation": {
-        "title": "Automação de Processos",
-        "description": "Automatize agendamentos, cobranças, follow-ups e muito mais"
-      },
-      "integration": {
-        "title": "Integração Completa",
-        "description": "Conecte seu WhatsApp com seu CRM, loja online e sistemas"
-      }
-    }
-  },
-  "results": {
-    "title": "Empresas Reais, Resultados Reais",
-    "subtitle": "Pequenas e médias empresas como a sua já estão faturando mais com nossa solução",
-    "cta": "Quero Resultados Assim →",
-    "cases": {
-      "dental": {
-        "name": "Clínica Odontológica",
-        "result": "+250% em agendamentos",
-        "metric": "150 → 525 pacientes/mês"
-      },
-      "clothing": {
-        "name": "Loja de Roupas Online",
-        "result": "+180% em vendas",
-        "metric": "R$ 15k → R$ 42k/mês"
-      },
-      "restaurant": {
-        "name": "Restaurante Delivery",
-        "result": "+300% em pedidos",
-        "metric": "200 → 800 pedidos/mês"
-      },
-      "gym": {
-        "name": "Academia Fitness",
-        "result": "+85% em matrículas",
-        "metric": "50 → 92 alunos/mês"
-      },
-      "salon": {
-        "name": "Salão de Beleza",
-        "result": "+200% em faturamento",
-        "metric": "R$ 10k → R$ 30k/mês"
-      },
-      "realestate": {
-        "name": "Imobiliária",
-        "result": "+150% em visitas",
-        "metric": "40 → 100 visitas/mês"
-      }
-    }
+    "eyebrow": "Sobre a Scintechn",
+    "title": "Uma AI software house liderada por um praticante de entrega.",
+    "paragraph1": "A Scintechn é uma AI software house pequena e focada, liderada por um Agile Delivery Lead. Construímos o tipo de produto que nós mesmos gostaríamos de usar — e entregamos com a mesma disciplina de um time de produto.",
+    "paragraph2": "Nosso portfólio cobre proptech, edtech, operações esportivas, eventos e SaaS white-label — todos construídos sobre uma plataforma consistente de Next.js + PostgreSQL + AI SDK, todos entregues em cadência de sprint com critérios de aceitação verificados por BDD.",
+    "paragraph3": "Trabalhamos com fundadores e operadores que não têm seis meses para esperar — e que preferem ver software funcionando a mais uma estimativa."
   },
   "contact": {
-    "title": "Pronto para Crescer?",
-    "subtitle": "Fale com um especialista e descubra quanto sua empresa pode economizar e faturar",
-    "name": "Seu Nome",
-    "email": "Seu Email",
-    "phone": "WhatsApp",
-    "message": "Conte-nos sobre seu negócio",
-    "send": "Quero uma Consultoria Gratuita",
-    "guarantee": "✓ Sem compromisso  ✓ Resposta em até 2 horas"
+    "eyebrow": "Iniciar um projeto",
+    "title": "Conte o que você quer construir.",
+    "subtitle": "Descreva brevemente seu projeto. Respondemos em até um dia útil com os próximos passos, dúvidas de escopo ou — se não for o encaixe certo — uma indicação.",
+    "name": "Nome",
+    "email": "Email",
+    "message": "O que você quer construir?",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "successTitle": "Mensagem enviada",
+    "successMessage": "Obrigado — retornaremos em até um dia útil.",
+    "errorTitle": "Não foi possível enviar",
+    "errorMessage": "Tente novamente, ou nos escreva direto em contact@scintechn.com.",
+    "validation": {
+      "nameRequired": "Nome é obrigatório",
+      "emailRequired": "Email é obrigatório",
+      "emailInvalid": "Informe um email válido",
+      "messageRequired": "Mensagem é obrigatória"
+    }
+  },
+  "footer": {
+    "tagline": "AI software house. Liderada por entrega, atuação global.",
+    "sections": {
+      "navigate": "Navegar",
+      "contact": "Fale conosco",
+      "follow": "Siga"
+    },
+    "social": {
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "whatsapp": "WhatsApp"
+    },
+    "legal": {
+      "cnpj": "CNPJ 36.955.612/0001-85",
+      "company": "Scint Technologia Serviços Ltda"
+    },
+    "rights": "Todos os direitos reservados."
   },
   "metadata": {
-    "title": "Scintech | Atendimento WhatsApp Inteligente e Automação para Pequenas Empresas",
-    "description": "Aumente suas vendas em até 300% com atendimento automatizado no WhatsApp. Solução completa para pequenas e médias empresas. Comece grátis!"
+    "title": "Scintechn — AI Software House",
+    "description": "A Scintechn é uma AI software house liderada por entrega. Desenhamos, construímos e entregamos produtos SaaS com IA — do requisito ao software funcionando, em semanas."
   },
-  "whatsapp": {
-    "online": "Online",
-    "title": "Precisa de Ajuda?",
-    "subtitle": "Fale com um especialista agora!",
-    "cta": "Iniciar Conversa",
-    "prefilledMessage": "Olá! Gostaria de saber mais sobre automação no WhatsApp para minha empresa."
-  },
-  "trustBadges": {
-    "businesses": "Empresas Atendidas",
-    "messages": "Mensagens Enviadas",
-    "responseTime": "Tempo de Resposta",
-    "uptime": "Disponibilidade"
-  },
-  "testimonials": {
-    "title": "O Que Nossos Clientes Dizem",
-    "subtitle": "Histórias reais de empresas que transformaram seu atendimento",
-    "testimonial1": {
-      "name": "Dra. Maria Silva",
-      "business": "Clínica Sorriso Perfeito",
-      "text": "Triplicamos nossos agendamentos em 2 meses. O bot responde instantaneamente e os pacientes amam!"
-    },
-    "testimonial2": {
-      "name": "Carlos Mendes",
-      "business": "Restaurante Sabor Caseiro",
-      "text": "Antes perdíamos muitos pedidos à noite. Agora o bot atende 24h e aumentamos o faturamento em 300%!"
-    },
-    "testimonial3": {
-      "name": "Juliana Costa",
-      "business": "Studio Bella",
-      "text": "Automação mudou meu negócio! Menos tempo no celular, mais tempo com clientes e R$ 30k/mês."
-    }
-  },
-  "faq": {
-    "title": "Perguntas Frequentes",
-    "subtitle": "Tire todas as suas dúvidas sobre nossa solução",
-    "q1": {
-      "question": "Como funciona a automação no WhatsApp?",
-      "answer": "Instalamos um bot inteligente no seu WhatsApp Business que responde automaticamente às mensagens, qualifica leads, agenda horários e muito mais. Tudo funciona 24/7 sem você precisar fazer nada."
-    },
-    "q2": {
-      "question": "Preciso mudar meu número de WhatsApp?",
-      "answer": "Não! Mantemos seu número atual. Fazemos toda a integração sem interromper seu atendimento."
-    },
-    "q3": {
-      "question": "Quanto tempo leva para implementar?",
-      "answer": "Implementação completa em até 7 dias úteis. Você começa a ver resultados desde a primeira semana."
-    },
-    "q4": {
-      "question": "E se meus clientes não gostarem do bot?",
-      "answer": "Nosso bot é projetado para parecer humano e pode transferir para atendimento humano a qualquer momento. Taxa de satisfação: 98%."
-    },
-    "q5": {
-      "question": "Funciona para qualquer tipo de negócio?",
-      "answer": "Sim! Atendemos clínicas, restaurantes, lojas, academias, salões, imobiliárias e muito mais. Personalizamos para seu nicho."
-    },
-    "q6": {
-      "question": "Posso cancelar quando quiser?",
-      "answer": "Sim, sem multas ou taxas. Mas temos 30 dias de garantia - se não gostar, devolvemos 100% do seu dinheiro."
-    },
-    "stillHaveQuestions": "Ainda tem dúvidas?",
-    "contactUs": "Fale com Nossa Equipe"
-  },
-  "pricing": {
-    "title": "Planos para Cada Momento do Seu Negócio",
-    "subtitle": "Escolha o plano ideal e comece a faturar mais hoje mesmo",
-    "mostPopular": "Mais Popular",
-    "perMonth": "por mês",
-    "moneyBack": "🛡️ 30 dias de garantia incondicional - Satisfação garantida ou seu dinheiro de volta",
-    "starter": {
-      "name": "Starter",
-      "price": "R$ 297",
-      "description": "Para começar a automatizar",
-      "feature1": "Até 1.000 mensagens/mês",
-      "feature2": "Bot com respostas automáticas",
-      "feature3": "Relatórios básicos",
-      "feature4": "Suporte por email",
-      "cta": "Começar Agora"
-    },
-    "growth": {
-      "name": "Growth",
-      "price": "R$ 697",
-      "description": "Para crescer com força",
-      "feature1": "Até 5.000 mensagens/mês",
-      "feature2": "Bot avançado + IA",
-      "feature3": "Integração com CRM",
-      "feature4": "Automação completa",
-      "feature5": "Suporte prioritário 24/7",
-      "cta": "Quero Crescer"
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "price": "Personalizado",
-      "description": "Solução sob medida",
-      "feature1": "Mensagens ilimitadas",
-      "feature2": "Multi-atendentes",
-      "feature3": "API personalizada",
-      "feature4": "Chatbot com deep learning",
-      "feature5": "Gerente de conta dedicado",
-      "feature6": "SLA garantido",
-      "cta": "Falar com Especialista"
-    }
-  },
-  "roiCalculator": {
-    "title": "Calcule Quanto Você Está Perdendo",
-    "subtitle": "Veja em tempo real o quanto sua empresa pode economizar e lucrar",
-    "customersPerDay": "Quantos clientes você atende por dia?",
-    "customers": "clientes/dia",
-    "lostPercentage": "Quantos % você perde por demora no atendimento?",
-    "lost": "perdidos",
-    "avgCustomerValue": "Qual o ticket médio do seu cliente?",
-    "youAreLosing": "Você está perdendo",
-    "perMonth": "por mês",
-    "automationCost": "Custo da automação",
-    "yourSavings": "Sua economia mensal",
-    "cta": "Quero Parar de Perder Dinheiro",
-    "guarantee": "✓ Implementação em 7 dias  ✓ Resultados garantidos"
-  },
-  "beforeAfter": {
-    "title": "A Transformação é Real",
-    "subtitle": "Veja o antes e depois de implementar nossa solução",
-    "beforeTitle": "Antes",
-    "beforeSubtitle": "Sem automação",
-    "before": {
-      "item1": "Perdia clientes por demora no atendimento",
-      "item2": "Equipe sobrecarregada e estressada",
-      "item3": "Sem atendimento fora do horário comercial",
-      "item4": "Vendas estagnadas ou caindo",
-      "item5": "Custos operacionais altos"
-    },
-    "afterTitle": "Depois",
-    "afterSubtitle": "Com automação",
-    "after": {
-      "item1": "Resposta instantânea 24/7 para todos",
-      "item2": "Equipe focada em tarefas estratégicas",
-      "item3": "Atendimento e vendas acontecendo sempre",
-      "item4": "Crescimento constante de 150-300%",
-      "item5": "Redução de 60% nos custos"
-    },
-    "cta": "Quero Essa Transformação"
-  },
-  "guarantee": {
-    "title": "Garantia Total de Satisfação",
-    "period": "30 Dias",
-    "description": "Teste nossa solução por 30 dias sem riscos. Se não aumentar suas vendas, devolvemos 100% do seu investimento.",
-    "benefit1": "Implantação completa sem custos extras",
-    "benefit2": "Treinamento da equipe incluso",
-    "benefit3": "Suporte dedicado durante todo período",
-    "benefit4": "Sem letras miúdas ou pegadinhas",
-    "promise": "Nossa promessa é simples: ou você vende mais e fica satisfeito, ou devolvemos seu dinheiro. Sem perguntas, sem burocracia.",
-    "cta": "Começar Sem Riscos",
-    "noQuestions": "Cancelamento simples, sem perguntas"
-  },
-  "leadMagnet": {
-    "badge": "100% Gratuito",
-    "title": "Guia Gratuito: Como Triplicar Suas Vendas no WhatsApp",
-    "subtitle": "Baixe nosso guia completo e descubra as estratégias que grandes empresas usam",
-    "whatYouGet": "O que você vai receber:",
-    "resource1": "Guia em PDF com 20+ páginas de estratégias",
-    "resource2": "Checklist pronto para implementar",
-    "resource3": "Templates de mensagens comprovadas",
-    "resource4": "Bônus: Consulta gratuita de 30 minutos",
-    "formTitle": "Receba Grátis Agora",
-    "formSubtitle": "Sem compromisso, sem cartão de crédito",
-    "nameLabel": "Nome",
-    "namePlaceholder": "Seu nome completo",
-    "emailLabel": "Email",
-    "emailPlaceholder": "seu@email.com",
-    "cta": "Baixar Guia Gratuito",
-    "sending": "Enviando...",
-    "privacy": "🔒 Seus dados estão seguros. Nunca enviaremos spam.",
-    "successTitle": "Enviado!",
-    "successMessage": "Confira seu email! Enviamos o guia e o bônus da consulta gratuita.",
-    "disclaimer": "Mais de 500 empresas já baixaram este guia e aumentaram suas vendas"
+  "a11y": {
+    "skipToContent": "Pular para o conteúdo principal"
   }
 }

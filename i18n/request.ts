@@ -11,7 +11,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   // Validate that the incoming `locale` parameter is valid
   if (!locale || !locales.includes(locale as Locale)) {
-    locale = 'pt'; // Default to Portuguese
+    locale = 'en'; // Default to English (worldwide audience)
   }
 
   return {

@@ -1,26 +1,16 @@
-import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import TrustBadges from '@/components/TrustBadges';
+import Work from '@/components/Work';
+import HowWeWork from '@/components/HowWeWork';
 import About from '@/components/About';
-import Services from '@/components/Services';
-import BeforeAfter from '@/components/BeforeAfter';
-import ROICalculator from '@/components/ROICalculator';
-import Projects from '@/components/Projects';
-import Testimonials from '@/components/Testimonials';
-import Pricing from '@/components/Pricing';
-import Guarantee from '@/components/Guarantee';
-import FAQ from '@/components/FAQ';
-import LeadMagnet from '@/components/LeadMagnet';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
-import WhatsAppWidget from '@/components/WhatsAppWidget';
 
 export async function generateMetadata({
-  params
+  params,
 }: {
-  params: Promise<{ locale: string }>
+  params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'metadata' });
@@ -31,25 +21,31 @@ export async function generateMetadata({
   };
 }
 
-export default function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const tA11y = await getTranslations({ locale, namespace: 'a11y' });
+
   return (
-    <main className="min-h-screen">
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:shadow-lg"
+      >
+        {tA11y('skipToContent')}
+      </a>
       <Header />
-      <Hero />
-      <TrustBadges />
-      <About />
-      <Services />
-      <BeforeAfter />
-      <ROICalculator />
-      <Projects />
-      <Testimonials />
-      <Pricing />
-      <Guarantee />
-      <FAQ />
-      <LeadMagnet />
-      <Contact />
+      <main id="main-content" className="min-h-screen bg-background">
+        <Hero />
+        <Work />
+        <HowWeWork />
+        <About />
+        <Contact />
+      </main>
       <Footer />
-      <WhatsAppWidget />
-    </main>
+    </>
   );
 }
