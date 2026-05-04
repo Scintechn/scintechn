@@ -8,7 +8,32 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default async function Image() {
+const COPY = {
+  en: {
+    eyebrow: 'Scintechn · AI Software House',
+    title: 'From requirement to working software — in weeks.',
+    subtitle: 'We design, build and ship AI-powered SaaS products. Delivery-led, worldwide.',
+    languages: 'EN · PT',
+  },
+  pt: {
+    eyebrow: 'Scintechn · AI Software House',
+    title: 'Do requisito ao software funcionando — em semanas.',
+    subtitle:
+      'Desenhamos, construímos e entregamos produtos SaaS com IA. Liderada por entrega, atuação global.',
+    languages: 'PT · EN',
+  },
+} as const;
+
+type Locale = keyof typeof COPY;
+
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const copy = COPY[locale as Locale] ?? COPY.en;
+
   return new ImageResponse(
     (
       <div
@@ -36,7 +61,7 @@ export default async function Image() {
             textTransform: 'uppercase',
           }}
         >
-          Scintechn · AI Software House
+          {copy.eyebrow}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -51,7 +76,7 @@ export default async function Image() {
               maxWidth: 980,
             }}
           >
-            From requirement to working software — in weeks.
+            {copy.title}
           </h1>
           <p
             style={{
@@ -62,7 +87,7 @@ export default async function Image() {
               lineHeight: 1.4,
             }}
           >
-            We design, build and ship AI-powered SaaS products. Delivery-led, worldwide.
+            {copy.subtitle}
           </p>
         </div>
 
@@ -76,7 +101,7 @@ export default async function Image() {
           }}
         >
           <span>scintechn.com</span>
-          <span style={{ color: '#9333ea', fontWeight: 600 }}>EN · PT</span>
+          <span style={{ color: '#9333ea', fontWeight: 600 }}>{copy.languages}</span>
         </div>
       </div>
     ),

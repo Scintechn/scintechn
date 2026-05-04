@@ -1,40 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 const MAX_NAME = 200;
 const MAX_EMAIL = 254;
 const MAX_MESSAGE = 5000;
 
-// Per-IP rate limit. Module-scoped Map persists across requests within a warm
-// lambda / dev process. This is a coarse first-line defense — not bulletproof
-// across serverless cold starts. For production-grade, swap for Upstash Redis
-// or Cloudflare Turnstile; the route shape stays the same.
 const RATE_WINDOW_MS = 60_000; // 1 minute
-const RATE_MAX = 3; // 3 submissions per minute per IP
+const RATE_MAX = 3; // 3 submissions / window / IP
+
+// --- Rate-limit backend selection -----------------------------------------
+// Production: Upstash Redis when both env vars are set (durable, survives
+// cold starts, works across serverless instances).
+// Dev / fallback: in-memory Map (good enough on a single warm instance).
+
+const upstashLimiter = (() => {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  return new Ratelimit({
+    redis: new Redis({ url, token }),
+    limiter: Ratelimit.slidingWindow(RATE_MAX, '60 s'),
+    prefix: 'scintechn:contact',
+    analytics: true,
+  });
+})();
+
 const ipHits = new Map<string, number[]>();
 
-function getClientIp(request: NextRequest): string {
-  const xff = request.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0]!.trim();
-  const real = request.headers.get('x-real-ip');
-  if (real) return real.trim();
-  return 'unknown';
-}
-
-function checkRateLimit(ip: string): { ok: true } | { ok: false; retryAfter: number } {
+function inMemoryCheck(ip: string): { ok: boolean; retryAfter: number } {
   const now = Date.now();
   const cutoff = now - RATE_WINDOW_MS;
   const hits = (ipHits.get(ip) || []).filter((t) => t > cutoff);
-
   if (hits.length >= RATE_MAX) {
     const retryAfter = Math.ceil((hits[0]! + RATE_WINDOW_MS - now) / 1000);
     return { ok: false, retryAfter: Math.max(retryAfter, 1) };
   }
-
   hits.push(now);
   ipHits.set(ip, hits);
-
-  // Opportunistic GC — keeps the Map from growing unbounded under load
   if (ipHits.size > 1000) {
     for (const [k, v] of ipHits) {
       const fresh = v.filter((t) => t > cutoff);
@@ -42,8 +46,24 @@ function checkRateLimit(ip: string): { ok: true } | { ok: false; retryAfter: num
       else ipHits.set(k, fresh);
     }
   }
+  return { ok: true, retryAfter: 0 };
+}
 
-  return { ok: true };
+async function checkRateLimit(ip: string): Promise<{ ok: boolean; retryAfter: number }> {
+  if (upstashLimiter) {
+    const { success, reset } = await upstashLimiter.limit(ip);
+    if (success) return { ok: true, retryAfter: 0 };
+    return { ok: false, retryAfter: Math.max(Math.ceil((reset - Date.now()) / 1000), 1) };
+  }
+  return inMemoryCheck(ip);
+}
+
+function getClientIp(request: NextRequest): string {
+  const xff = request.headers.get('x-forwarded-for');
+  if (xff) return xff.split(',')[0]!.trim();
+  const real = request.headers.get('x-real-ip');
+  if (real) return real.trim();
+  return 'unknown';
 }
 
 const stripCrlf = (s: string) => s.replace(/[\r\n]+/g, ' ').trim();
@@ -59,7 +79,7 @@ const escapeHtml = (s: string) =>
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(ip);
+    const rate = await checkRateLimit(ip);
     if (!rate.ok) {
       return NextResponse.json(
         { error: 'Too many requests' },
@@ -69,8 +89,8 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Honeypot — hidden field real users never fill. Bots that auto-fill all
-    // inputs trip it. Return 200 silently so the bot can't probe for the trap.
+    // Honeypot — hidden field real users never fill. 200 silently on trip
+    // so bots can't probe the trap.
     if (typeof body.website === 'string' && body.website.trim() !== '') {
       return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
     }
