@@ -10,14 +10,16 @@ export const contentType = 'image/png';
 
 const COPY = {
   en: {
-    eyebrow: 'Scintechn · AI Software House',
-    title: 'From requirement to working software — in weeks.',
+    eyebrow: 'DELIVERY-LED · AI SAAS',
+    titleLead: 'From requirement to working software,',
+    titleAccent: 'in weeks.',
     subtitle: 'We design, build and ship AI-powered SaaS products. Delivery-led, worldwide.',
     languages: 'EN · PT',
   },
   pt: {
-    eyebrow: 'Scintechn · AI Software House',
-    title: 'Do requisito ao software funcionando — em semanas.',
+    eyebrow: 'LIDERADO POR ENTREGA · AI SAAS',
+    titleLead: 'Do requisito ao software funcionando,',
+    titleAccent: 'em semanas.',
     subtitle:
       'Desenhamos, construímos e entregamos produtos SaaS com IA. Liderada por entrega, atuação global.',
     languages: 'PT · EN',
@@ -25,6 +27,11 @@ const COPY = {
 } as const;
 
 type Locale = keyof typeof COPY;
+
+const INK = '#0B0F14';
+const PAPER = '#F7F6F2';
+const VIOLET = '#702DB4';
+const MUTED = '#6B7280';
 
 export default async function Image({
   params,
@@ -38,52 +45,56 @@ export default async function Image({
     (
       <div
         style={{
-          background: '#ffffff',
+          background: PAPER,
           width: '100%',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '80px 96px',
-          fontFamily: 'sans-serif',
-          backgroundImage:
-            'radial-gradient(ellipse 60% 50% at 100% 0%, rgba(155, 70, 196, 0.12), transparent 60%), radial-gradient(ellipse 50% 40% at 0% 100%, rgba(155, 70, 196, 0.08), transparent 60%)',
+          fontFamily: 'system-ui, sans-serif',
         }}
       >
+        {/* Eyebrow */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            fontSize: 24,
+            fontFamily: 'ui-monospace, monospace',
+            fontSize: 22,
             fontWeight: 700,
-            color: '#9333ea',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
+            color: VIOLET,
+            letterSpacing: '0.18em',
           }}
         >
           {copy.eyebrow}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {/* Headline */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           <h1
             style={{
               fontSize: 80,
               fontWeight: 800,
-              color: '#0f0f14',
-              lineHeight: 1.05,
-              letterSpacing: '-0.02em',
+              color: INK,
+              lineHeight: 1.02,
+              letterSpacing: '-0.025em',
               margin: 0,
-              maxWidth: 980,
+              maxWidth: 1000,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0 18px',
             }}
           >
-            {copy.title}
+            <span>{copy.titleLead}</span>
+            <span style={{ color: VIOLET }}>{copy.titleAccent}</span>
           </h1>
           <p
             style={{
-              fontSize: 28,
-              color: '#5a5a6a',
+              fontSize: 26,
+              color: MUTED,
               margin: 0,
-              maxWidth: 900,
+              maxWidth: 920,
               lineHeight: 1.4,
             }}
           >
@@ -91,17 +102,20 @@ export default async function Image({
           </p>
         </div>
 
+        {/* Footer */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            fontSize: 22,
-            color: '#5a5a6a',
+            fontFamily: 'ui-monospace, monospace',
+            fontSize: 20,
+            color: MUTED,
+            letterSpacing: '0.12em',
           }}
         >
-          <span>scintechn.com</span>
-          <span style={{ color: '#9333ea', fontWeight: 600 }}>{copy.languages}</span>
+          <span>SCINTECHN.COM</span>
+          <span style={{ color: VIOLET, fontWeight: 600 }}>{copy.languages}</span>
         </div>
       </div>
     ),

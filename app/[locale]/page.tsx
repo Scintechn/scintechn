@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Work from '@/components/Work';
-import HowWeWork from '@/components/HowWeWork';
+import Approach from '@/components/Approach';
 import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
@@ -41,7 +41,7 @@ export default async function Home({
       <main id="main-content" className="min-h-screen bg-background">
         <Hero />
         <Work />
-        <HowWeWork />
+        <Approach />
         <About />
         <Contact />
       </main>

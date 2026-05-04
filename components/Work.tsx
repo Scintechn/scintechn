@@ -55,10 +55,10 @@ export default function Work() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl mb-16"
         >
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-4">
             {t('eyebrow')}
           </p>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground font-merriweather leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground tracking-tight leading-[1.05] text-balance">
             {t('title')}
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
@@ -77,7 +77,7 @@ export default function Work() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-2">
                     {t(`items.${product.key}.vertical`)}
                   </p>
                   <h3 className="text-2xl font-bold text-foreground">
@@ -109,7 +109,7 @@ export default function Work() {
                 {product.stack.map((tech) => (
                   <span
                     key={tech}
-                    className="inline-flex items-center rounded-md bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
+                    className="font-mono inline-flex items-center rounded-md bg-secondary px-2.5 py-0.5 text-[11px] font-medium text-secondary-foreground"
                   >
                     {tech}
                   </span>

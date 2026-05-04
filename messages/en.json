@@ -1,13 +1,13 @@
 {
   "nav": {
     "work": "Work",
-    "howWeWork": "How we work",
+    "approach": "Approach",
     "about": "About",
-    "contact": "Contact"
+    "startProject": "Start a project"
   },
   "hero": {
-    "eyebrow": "AI Software House",
-    "title": "From requirement to working software — in weeks.",
+    "eyebrow": "Delivery-led · AI SaaS",
+    "title": "From requirement to working software, <accent>in weeks.</accent>",
     "subtitle": "We design, build and ship AI-powered SaaS products. Delivery-led, not sales-led.",
     "primaryCta": "Start a project",
     "secondaryCta": "See our work"
@@ -51,8 +51,8 @@
       }
     }
   },
-  "howWeWork": {
-    "eyebrow": "How we work",
+  "approach": {
+    "eyebrow": "Approach",
     "title": "Predictable delivery, written down.",
     "subtitle": "We protect your time, your budget and your scope by treating requirements as testable specifications — not slide decks.",
     "pillars": {

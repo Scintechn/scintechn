@@ -62,10 +62,10 @@ export default function Contact() {
           className="max-w-2xl mx-auto"
         >
           <div className="text-center mb-10">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-4">
               {t('eyebrow')}
             </p>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground font-merriweather leading-tight">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground tracking-tight leading-[1.05] text-balance">
               {t('title')}
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">

@@ -18,10 +18,10 @@ export default function About() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl"
         >
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-4">
             {t('eyebrow')}
           </p>
-          <h2 className="text-3xl md:text-5xl font-bold mb-8 text-foreground font-merriweather leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold mb-8 text-foreground tracking-tight leading-[1.05] text-balance">
             {t('title')}
           </h2>
           <div className="space-y-5 text-lg text-muted-foreground leading-relaxed">

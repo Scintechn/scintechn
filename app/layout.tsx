@@ -1,25 +1,25 @@
-import type { Metadata } from "next";
-import { Roboto, Merriweather } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter_Tight, JetBrains_Mono } from 'next/font/google';
+import './globals.css';
 
-const roboto = Roboto({
-  weight: ['100', '300', '400', '500', '700', '900'],
-  subsets: ["latin"],
-  variable: '--font-roboto',
+const interTight = Inter_Tight({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-inter-tight',
   display: 'swap',
 });
 
-const merriweather = Merriweather({
-  weight: ['300', '400', '700', '900'],
-  subsets: ["latin"],
-  variable: '--font-merriweather',
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-jetbrains-mono',
   display: 'swap',
-  style: ['normal', 'italic'],
 });
 
 export const metadata: Metadata = {
-  title: "Scintech | Soluções Digitais inovadoras e Automação para Negócios",
-  description: "Scintech, especialista em automação e soluções digitais, transforma negócios com inovação e eficiência. Acelere o futuro da sua empresa hoje mesmo!",
+  title: 'Scintechn — AI Software House',
+  description:
+    'Scintechn is a delivery-led AI software house. We design, build and ship AI-powered SaaS products — from requirement to working software, in weeks.',
 };
 
 export default function RootLayout({
@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt">
-      <body className={`${roboto.variable} ${merriweather.variable} antialiased`}>
+    <html lang="en">
+      <body className={`${interTight.variable} ${jetbrainsMono.variable} antialiased`}>
         {children}
       </body>
     </html>

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Linkedin, Instagram, MessageCircle, Mail } from 'lucide-react';
 
@@ -28,25 +27,23 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="footer" className="border-t border-border bg-secondary/30">
+    <footer id="footer" className="border-t border-border bg-secondary/40">
       <div className="container mx-auto px-4 py-14">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5">
-            <div className="relative h-10 w-36 mb-4">
-              <Image
-                src="/images/logo-default-362x90.png"
-                alt="Scintechn"
-                fill
-                className="object-contain object-left"
-              />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/scintechn-lockup-light.svg"
+              alt="Scintechn"
+              className="h-12 w-auto mb-4"
+            />
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
               {t('tagline')}
             </p>
           </div>
 
           <div className="md:col-span-2">
-            <h3 className="text-sm font-semibold text-foreground mb-3">
+            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/70 mb-3">
               {t('sections.navigate')}
             </h3>
             <ul className="space-y-2 text-sm">
@@ -56,8 +53,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#how-we-work" className="text-muted-foreground hover:text-primary transition">
-                  {tNav('howWeWork')}
+                <a href="#approach" className="text-muted-foreground hover:text-primary transition">
+                  {tNav('approach')}
                 </a>
               </li>
               <li>
@@ -67,14 +64,14 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#contact" className="text-muted-foreground hover:text-primary transition">
-                  {tNav('contact')}
+                  {tNav('startProject')}
                 </a>
               </li>
             </ul>
           </div>
 
           <div className="md:col-span-3">
-            <h3 className="text-sm font-semibold text-foreground mb-3">
+            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/70 mb-3">
               {t('sections.contact')}
             </h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
@@ -102,7 +99,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <h3 className="text-sm font-semibold text-foreground mb-3">
+            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/70 mb-3">
               {t('sections.follow')}
             </h3>
             <ul className="flex gap-2">
@@ -127,7 +124,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-3">
             <span>&copy; {currentYear} {t('legal.company')}.</span>
             <span className="hidden md:inline text-border">•</span>
-            <span>{t('legal.cnpj')}</span>
+            <span className="font-mono">{t('legal.cnpj')}</span>
           </div>
           <p>{t('rights')}</p>
         </div>

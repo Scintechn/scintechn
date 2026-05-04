@@ -1,13 +1,13 @@
 {
   "nav": {
     "work": "Projetos",
-    "howWeWork": "Como entregamos",
+    "approach": "Método",
     "about": "Sobre",
-    "contact": "Contato"
+    "startProject": "Iniciar um projeto"
   },
   "hero": {
-    "eyebrow": "AI Software House",
-    "title": "Do requisito ao software funcionando — em semanas.",
+    "eyebrow": "Liderado por entrega · AI SaaS",
+    "title": "Do requisito ao software funcionando, <accent>em semanas.</accent>",
     "subtitle": "Desenhamos, construímos e entregamos produtos SaaS com IA. Liderado por entrega, não por vendas.",
     "primaryCta": "Iniciar um projeto",
     "secondaryCta": "Ver nossos projetos"
@@ -51,8 +51,8 @@
       }
     }
   },
-  "howWeWork": {
-    "eyebrow": "Como entregamos",
+  "approach": {
+    "eyebrow": "Método",
     "title": "Entrega previsível, escrita.",
     "subtitle": "Protegemos o seu tempo, o seu orçamento e o seu escopo tratando os requisitos como especificações testáveis — não como slides.",
     "pillars": {

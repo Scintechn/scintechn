@@ -2,13 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ----------------------------------------------------------
+   Scintechn brand tokens · v1 (May 2026)
+   Ink   #0B0F14 · Paper  #F7F6F2 · Violet #702DB4 · Muted #6B7280
+   ---------------------------------------------------------- */
+
 body {
-  font-family: var(--font-roboto), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .font-mono {
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   }
 }
 
@@ -34,59 +42,63 @@ html {
 @layer base {
   :root {
     /* Surface */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 8%;
+    --background: 48 26% 96%;       /* Paper  #F7F6F2 */
+    --foreground: 213 29% 6%;       /* Ink    #0B0F14 */
 
-    /* Brand purple — used as the single accent (CTAs, links, highlights) */
-    --primary: 270 60% 44%;
-    --primary-foreground: 0 0% 100%;
+    /* Brand violet — solid accent only, never tinted or gradient. */
+    --primary: 270 60% 44%;         /* Violet #702DB4 */
+    --primary-foreground: 48 26% 96%; /* Paper on Violet */
 
-    /* Muted / cards / borders */
+    /* Cards lift slightly above the Paper ground for separation */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
+    --card-foreground: 213 29% 6%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 8%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 8%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-    --accent: 270 60% 96%;
+    --popover-foreground: 213 29% 6%;
+
+    /* Secondary surfaces — a touch deeper than Paper for footer / banded sections */
+    --secondary: 48 18% 92%;
+    --secondary-foreground: 213 29% 6%;
+
+    --muted: 48 18% 92%;
+    --muted-foreground: 220 9% 46%; /* Muted #6B7280 */
+
+    --accent: 270 30% 96%;          /* Soft violet hover background */
     --accent-foreground: 270 60% 30%;
 
-    /* States */
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
+
+    --border: 48 12% 88%;
+    --input: 48 12% 88%;
     --ring: 270 60% 44%;
 
     --chart-1: 270 60% 44%;
     --chart-2: 270 50% 60%;
-    --chart-3: 240 10% 30%;
+    --chart-3: 213 29% 30%;
     --chart-4: 270 30% 75%;
-    --chart-5: 240 4% 46%;
+    --chart-5: 220 9% 46%;
     --radius: 0.625rem;
   }
 
   .dark {
-    --background: 240 10% 6%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 98%;
+    --background: 213 29% 6%;
+    --foreground: 48 26% 96%;
+    --card: 213 25% 9%;
+    --card-foreground: 48 26% 96%;
+    --popover: 213 25% 9%;
+    --popover-foreground: 48 26% 96%;
     --primary: 270 70% 65%;
-    --primary-foreground: 240 10% 6%;
-    --secondary: 240 5% 14%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 5% 14%;
-    --muted-foreground: 240 5% 65%;
+    --primary-foreground: 213 29% 6%;
+    --secondary: 213 20% 14%;
+    --secondary-foreground: 48 26% 96%;
+    --muted: 213 20% 14%;
+    --muted-foreground: 220 7% 57%; /* Muted· #8A8F98 */
     --accent: 270 50% 20%;
     --accent-foreground: 270 60% 90%;
     --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 18%;
-    --input: 240 5% 18%;
+    --destructive-foreground: 48 26% 96%;
+    --border: 213 18% 18%;
+    --input: 213 18% 18%;
     --ring: 270 70% 65%;
   }
 }

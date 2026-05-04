@@ -12,13 +12,13 @@ const pillars = [
   { key: 'ownership', Icon: Unlock },
 ] as const;
 
-export default function HowWeWork() {
-  const t = useTranslations('howWeWork');
+export default function Approach() {
+  const t = useTranslations('approach');
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section id="how-we-work" className="py-24 md:py-32 bg-secondary/40" ref={ref}>
+    <section id="approach" className="py-24 md:py-32 bg-secondary/60" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -26,10 +26,10 @@ export default function HowWeWork() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl mb-16"
         >
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-4">
             {t('eyebrow')}
           </p>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground font-merriweather leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground tracking-tight leading-[1.05] text-balance">
             {t('title')}
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">

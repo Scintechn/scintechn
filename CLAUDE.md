@@ -38,20 +38,26 @@ Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/
 - Server components call `getTranslations({ locale, namespace })`; client components call `useTranslations(namespace)`. Locale params are async (`params: Promise<{ locale: string }>`) — Next 15 convention.
 
 ### Component layer
-- Page sections are imported and stacked in `app/[locale]/page.tsx`. Current order: `Header → Hero → Work → HowWeWork → About → Contact → Footer`. The page also renders a skip-to-main-content link before the header. Reordering or removing one means editing that page file.
+- Page sections are imported and stacked in `app/[locale]/page.tsx`. Current order: `Header → Hero → Work → Approach → About → Contact → Footer`. The page also renders a skip-to-main-content link before the header. Reordering or removing one means editing that page file.
 - Most section components are `'use client'` because they use Framer Motion scroll animations (`useInView`) or form state. Server components are limited to layout/page/metadata files.
 - `components/ui/` is **shadcn/ui** (New York style, neutral base, Lucide icons — see `components.json`). Add new primitives via `npx shadcn@latest add <name>` rather than hand-rolling.
 - Path alias `@/*` maps to the repo root (see `tsconfig.json`). Standard imports: `@/components/...`, `@/components/ui/...`, `@/lib/utils`, `@/hooks/use-toast`.
 - `lib/utils.ts` exports `cn()` (clsx + tailwind-merge) — use it for conditional class composition.
 - The portfolio (`Work.tsx`) hard-codes the 5 product card metadata (URL + stack chips); the rest of the card copy comes from translations under the `work.items.*` namespace. Adding a product means editing both `Work.tsx` and both translation files.
 
-### Styling
-- Tailwind is wired to shadcn HSL CSS variables defined in `app/globals.css` (`:root` and `.dark` blocks). `tailwind.config.ts` references them as `hsl(var(--primary))` etc.
-- **Theme: white surface, near-black text, single purple accent.** `--primary` is `hsl(270 60% 44%)` (~7.7:1 contrast on white, AAA). Purple is reserved for CTAs, focused links, and highlights — body uses `--background` / `--foreground` / `--muted-foreground`. Don't introduce gradient backgrounds or full-bleed brand colors; the design relies on minimalism with one accent.
-- `tailwind.config.ts` still has a legacy hardcoded `primary.dark: '#3d42a0'` token from the old blue theme. It's not referenced anywhere; safe to remove if you touch the file.
-- Dark-mode HSL variables are defined but the site does not toggle dark mode — no theme switcher is wired up.
+### Styling — brand v1 (May 2026)
+- Tailwind is wired to HSL CSS variables in `app/globals.css` (`:root` + `.dark`). The brand palette:
+  - **Ink** `#0B0F14` — `--foreground` — primary text (`hsl(213 29% 6%)`)
+  - **Paper** `#F7F6F2` — `--background` — page surface (`hsl(48 26% 96%)`). NOT pure white; the kit explicitly forbids `#FFFFFF` as the ground.
+  - **Violet** `#702DB4` — `--primary` — single accent (`hsl(270 60% 44%)`, ~7.7:1 on Paper, AAA). Reserved for CTAs, focused links, the highlighted span on the hero headline, and the violet block in the brand mark. Never gradient or tint it.
+  - **Muted** `#6B7280` — `--muted-foreground` — captions, body secondary
+  - Cards lift to `hsl(0 0% 100%)` for separation against Paper.
+- Dark-mode tokens are defined but the site does not toggle dark mode.
+- Brand assets live in `public/brand/` (9 SVGs: lockups, mark variants, wordmarks, favicon, app icon). `scintechn-lockup-light.svg` is the official header logo. See `docs/# Scintechn — Brand Kit.md` for the construction grid and rules.
+- Fonts: **Inter Tight** (sans, body + display) and **JetBrains Mono** (mono, eyebrows + tags + footer micro-caps). Loaded via `next/font/google` in `app/[locale]/layout.tsx` (and root `app/layout.tsx`); exposed as `--font-inter-tight` / `--font-jetbrains-mono`. Use `font-mono` utility in `globals.css` for mono spans.
+- Headline pattern: `tracking-tight leading-[1.05] text-balance font-bold`. Eyebrow pattern: `font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary`.
+- Hero headline uses `t.rich('hero.title', { accent: ... })` — the `<accent>` placeholder in the translation wraps the violet-highlighted segment ("in weeks." / "em semanas.").
 - Custom keyframes (`fadeIn`) live in `globals.css`, not the Tailwind config.
-- Fonts: Roboto (sans, default) and Merriweather (serif, used for headings) loaded via `next/font/google` in `app/[locale]/layout.tsx` and exposed as `--font-roboto` / `--font-merriweather` Tailwind variables.
 
 ### Forms & API
 - Contact form (`components/Contact.tsx`) uses **React Hook Form** (no Zod resolver — validation is built into RHF's `register` rules with translated error messages). POSTs to `/api/contact`.

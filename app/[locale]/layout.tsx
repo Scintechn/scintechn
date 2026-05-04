@@ -1,25 +1,24 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
-import { Roboto, Merriweather } from 'next/font/google';
+import { Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 import '../globals.css';
 
 const GTM_ID = 'GTM-KPXTTSRQ';
 
-const roboto = Roboto({
-  weight: ['100', '300', '400', '500', '700', '900'],
+const interTight = Inter_Tight({
   subsets: ['latin'],
-  variable: '--font-roboto',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-inter-tight',
   display: 'swap',
 });
 
-const merriweather = Merriweather({
-  weight: ['300', '400', '700', '900'],
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  variable: '--font-merriweather',
+  weight: ['400', '500', '700'],
+  variable: '--font-jetbrains-mono',
   display: 'swap',
-  style: ['normal', 'italic'],
 });
 
 export async function generateMetadata({
@@ -53,7 +52,7 @@ export async function generateMetadata({
       type: 'website',
       images: [
         {
-          url: '/images/logo-default-362x90.png',
+          url: '/brand/scintechn-lockup-light.svg',
           width: 362,
           height: 90,
           alt: 'Scintechn — AI Software House',
@@ -92,7 +91,8 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+        <link rel="icon" type="image/svg+xml" href="/brand/scintechn-favicon-32.svg" />
+        <link rel="apple-touch-icon" href="/brand/scintechn-app-icon-512.svg" />
         <Script id="gtm-init" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -109,7 +109,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               name: 'Scintechn',
               alternateName: 'Scintech Services',
               url: 'https://scintechn.com',
-              logo: 'https://scintechn.com/images/logo-default-362x90.png',
+              logo: 'https://scintechn.com/brand/scintechn-lockup-light.svg',
               description:
                 'AI software house. We design, build and ship AI-powered SaaS products — from requirement to working software, in weeks.',
               contactPoint: {
@@ -122,7 +122,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
       </head>
-      <body className={`${roboto.variable} ${merriweather.variable} antialiased`}>
+      <body className={`${interTight.variable} ${jetbrainsMono.variable} antialiased`}>
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
