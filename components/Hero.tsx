@@ -29,7 +29,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight leading-[1.02] text-foreground mb-8"
+            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-[-0.03em] leading-[1.02] text-foreground mb-8 max-w-5xl"
           >
             {t.rich('title', {
               break: () => <br className="hidden md:inline" />,
