@@ -95,6 +95,17 @@ export default function Footer() {
                   +55 11 96911-1424
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://wa.me/351931852422"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-primary transition"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden />
+                  +351 931 852 422
+                </a>
+              </li>
             </ul>
           </div>
 
