@@ -29,9 +29,10 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight leading-[1.02] text-foreground mb-8 text-balance"
+            className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight leading-[1.02] text-foreground mb-8"
           >
             {t.rich('title', {
+              break: () => <br className="hidden md:inline" />,
               accent: (chunks) => (
                 <span className="text-primary">{chunks}</span>
               ),
@@ -42,7 +43,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35 }}
-            className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-10"
+            className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 text-balance"
           >
             {t('subtitle')}
           </motion.p>
