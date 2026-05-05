@@ -12,10 +12,11 @@ import { sendSparkEmail } from '@/lib/spark-email';
 
 const MIN_IDEA_CHARS = 12;
 const MAX_IDEA_CHARS = 2500;
-// Schema worst case is ~6000 chars (~1800 tokens); 1500 leaves comfortable
-// headroom while keeping per-call cost under $0.01.
-const MAX_OUTPUT_TOKENS = 1500;
-const ESTIMATED_COST_USD = 0.01;
+// Schema worst case is ~6000 chars (~1800 tokens); 2000 leaves comfortable
+// headroom for the model's most-verbose plans (observed truncation at 1500
+// on richer outputs). Per-call cost ceiling rises to ~$0.012 at full output.
+const MAX_OUTPUT_TOKENS = 2000;
+const ESTIMATED_COST_USD = 0.012;
 // Anthropic Haiku 4.5 published rates (2026-05). Verify on rate change.
 const HAIKU_INPUT_COST_PER_TOKEN = 1 / 1_000_000; // $1 per 1M input tokens
 const HAIKU_OUTPUT_COST_PER_TOKEN = 5 / 1_000_000; // $5 per 1M output tokens
