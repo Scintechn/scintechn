@@ -102,7 +102,7 @@
     },
     "result": {
       "regionLabel": "Plano de build",
-      "ready": "Quer construir isso?",
+      "ready": "Pronto para construir?",
       "elevator": "Pitch",
       "scope": {
         "in": "No escopo (v1)",

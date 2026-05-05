@@ -62,7 +62,8 @@ export default function Spark() {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitError(null);
-    setResult({ type: 'idle' });
+    // Keep the previous plan visible until the new request resolves — replaced
+    // on success/refusal, preserved on error so the user isn't left empty-handed.
 
     try {
       const response = await fetch('/api/spark', {
@@ -303,7 +304,7 @@ export default function Spark() {
                   </p>
                 </PlanSection>
 
-                <PlanSection delay={60} reduceMotion={reduceMotion}>
+                <PlanSection delay={30} reduceMotion={reduceMotion}>
                   <div className="grid gap-6 md:grid-cols-2">
                     <div>
                       <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
@@ -336,7 +337,7 @@ export default function Spark() {
                   </div>
                 </PlanSection>
 
-                <PlanSection delay={120} reduceMotion={reduceMotion}>
+                <PlanSection delay={60} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.stack')}
                   </h3>
@@ -352,7 +353,7 @@ export default function Spark() {
                   </div>
                 </PlanSection>
 
-                <PlanSection delay={180} reduceMotion={reduceMotion}>
+                <PlanSection delay={90} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.phases')}
                   </h3>
@@ -389,7 +390,7 @@ export default function Spark() {
                   </ul>
                 </PlanSection>
 
-                <PlanSection delay={240} reduceMotion={reduceMotion}>
+                <PlanSection delay={120} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.risks')}
                   </h3>
@@ -431,7 +432,7 @@ export default function Spark() {
                   </ul>
                 </PlanSection>
 
-                <PlanSection delay={300} reduceMotion={reduceMotion}>
+                <PlanSection delay={150} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.questions')}
                   </h3>
@@ -497,7 +498,7 @@ function PlanSection({
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: delay / 1000 }}
+      transition={{ duration: 0.3, delay: delay / 1000 }}
     >
       {children}
     </motion.div>

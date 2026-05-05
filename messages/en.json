@@ -102,7 +102,7 @@
     },
     "result": {
       "regionLabel": "Build plan",
-      "ready": "Want this built?",
+      "ready": "Ready to build it?",
       "elevator": "Pitch",
       "scope": {
         "in": "In scope (v1)",
