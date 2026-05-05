@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { motion, useInView } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { ArrowRight } from 'lucide-react';
+import { track } from '@/lib/analytics';
 
 type FormData = {
   name: string;
@@ -15,10 +16,16 @@ type FormData = {
 
 export default function Contact() {
   const t = useTranslations('contact');
+  const locale = useLocale();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  // Tracks whether the current message field was populated by Spark's
+  // "Talk to us about this →" CTA. Used to label submit events with
+  // from_spark=true so the funnel report can distinguish Spark-attributed
+  // contact submits from cold-start submits.
+  const fromSparkRef = useRef(false);
 
   const {
     register,
@@ -43,9 +50,12 @@ export default function Contact() {
           'message' in parsed &&
           typeof (parsed as { message: unknown }).message === 'string'
         ) {
-          setValue('message', (parsed as { message: string }).message, {
-            shouldDirty: true,
-          });
+          const obj = parsed as { message: string; source?: unknown };
+          setValue('message', obj.message, { shouldDirty: true });
+          // Only attribute to Spark if the writer explicitly tagged it.
+          // Lets a future non-Spark prefill writer coexist without
+          // accidentally polluting the from_spark funnel signal.
+          if (obj.source === 'spark') fromSparkRef.current = true;
         }
         sessionStorage.removeItem('contact-prefill');
       } catch {
@@ -60,9 +70,16 @@ export default function Contact() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, [setValue]);
 
+  useEffect(() => {
+    if (isInView) track('contact_view', { locale });
+  }, [isInView, locale]);
+
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
+
+    const fromSpark = fromSparkRef.current;
+    track('contact_submit', { locale, from_spark: fromSpark });
 
     try {
       const response = await fetch('/api/contact', {
@@ -73,13 +90,23 @@ export default function Contact() {
 
       if (response.ok) {
         setSubmitStatus('success');
+        track('contact_success', { locale, from_spark: fromSpark });
+        // Clear the from-spark flag once consumed so a follow-up submit on
+        // the same session doesn't get incorrectly attributed.
+        fromSparkRef.current = false;
         reset();
         setTimeout(() => setSubmitStatus('idle'), 6000);
       } else {
         setSubmitStatus('error');
+        track('contact_error', {
+          locale,
+          from_spark: fromSpark,
+          http_status: response.status,
+        });
       }
     } catch {
       setSubmitStatus('error');
+      track('contact_error', { locale, from_spark: fromSpark, http_status: 0 });
     } finally {
       setIsSubmitting(false);
     }

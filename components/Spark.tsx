@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   motion,
   AnimatePresence,
@@ -10,6 +10,7 @@ import {
 } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { ArrowRight } from 'lucide-react';
+import { track } from '@/lib/analytics';
 
 type FormData = {
   idea: string;
@@ -55,6 +56,7 @@ const PHONE_RE = /^\+\d{8,15}$/;
 
 export default function Spark() {
   const t = useTranslations('spark');
+  const locale = useLocale();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
   const reduceMotion = useReducedMotion() ?? false;
@@ -70,6 +72,11 @@ export default function Spark() {
     startedAtRef.current = Date.now();
   }, []);
 
+  // Fire spark_view exactly once when the section enters the viewport.
+  useEffect(() => {
+    if (isInView) track('spark_view', { locale });
+  }, [isInView, locale]);
+
   const {
     register,
     handleSubmit,
@@ -81,6 +88,13 @@ export default function Spark() {
     setSubmitError(null);
     // Keep the previous plan visible until the new request resolves — replaced
     // on success/refusal, preserved on error so the user isn't left empty-handed.
+
+    const contactKind = data.contact.includes('@') ? 'email' : 'phone';
+    track('spark_submit', {
+      locale,
+      idea_length: data.idea.length,
+      contact_kind: contactKind,
+    });
 
     try {
       const response = await fetch('/api/spark', {
@@ -99,13 +113,26 @@ export default function Spark() {
       if (response.ok && 'ok' in json && json.ok) {
         if ('plan' in json) {
           setResult({ type: 'plan', plan: json.plan, idea: data.idea });
+          track('spark_plan_rendered', {
+            locale,
+            currency: json.plan.costOfInaction.currency,
+            period: json.plan.costOfInaction.period,
+            phases_count: json.plan.phases.length,
+            risks_count: json.plan.risks.length,
+          });
         } else {
           setResult({ type: 'refusal' });
+          track('spark_refusal', { locale });
         }
         return;
       }
 
       const code = (json as ApiError).error;
+      track('spark_error', {
+        locale,
+        error_code: code ?? 'unknown',
+        http_status: response.status,
+      });
       switch (code) {
         case 'rate_limit':
           setSubmitError(t('errors.rateLimited'));
@@ -126,6 +153,7 @@ export default function Spark() {
           setSubmitError(t('errors.generic'));
       }
     } catch {
+      track('spark_error', { locale, error_code: 'network', http_status: 0 });
       setSubmitError(t('errors.generic'));
     } finally {
       setIsSubmitting(false);
@@ -134,9 +162,16 @@ export default function Spark() {
 
   const handleTalkClick = () => {
     if (result.type !== 'plan') return;
+    track('spark_talk_clicked', {
+      locale,
+      currency: result.plan.costOfInaction.currency,
+    });
     const message = t('cta.talkPrefill', { idea: result.idea });
     try {
-      sessionStorage.setItem('contact-prefill', JSON.stringify({ message }));
+      sessionStorage.setItem(
+        'contact-prefill',
+        JSON.stringify({ message, source: 'spark' }),
+      );
     } catch {
       // sessionStorage unavailable — proceed without prefill (anchor still works).
     }
