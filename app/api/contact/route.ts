@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { createRateLimiter, getClientIp } from '@/lib/rate-limit';
+import { escapeHtml } from '@/lib/html';
 
 const MAX_NAME = 200;
 const MAX_EMAIL = 254;
@@ -13,14 +14,6 @@ const rateLimiter = createRateLimiter({
 });
 
 const stripCrlf = (s: string) => s.replace(/[\r\n]+/g, ' ').trim();
-
-const escapeHtml = (s: string) =>
-  s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 
 export async function POST(request: NextRequest) {
   try {
