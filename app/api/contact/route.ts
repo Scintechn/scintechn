@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { createRateLimiter, getClientIp } from '@/lib/rate-limit';
 import { escapeHtml } from '@/lib/html';
+import { sendPostmarkEmail } from '@/lib/postmark';
 
 const MAX_NAME = 200;
 const MAX_EMAIL = 254;
@@ -62,15 +62,11 @@ export async function POST(request: NextRequest) {
     const htmlEmail = escapeHtml(safeEmail);
     const htmlMessage = escapeHtml(rawMessage).replace(/\n/g, '<br>');
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '465'),
-      secure: true,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
+    const recipientEmail = process.env.RECIPIENT_EMAIL;
+    if (!recipientEmail) {
+      console.error('[contact] RECIPIENT_EMAIL not configured');
+      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    }
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -115,9 +111,8 @@ export async function POST(request: NextRequest) {
       </html>
     `;
 
-    await transporter.sendMail({
-      from: `"Scintechn Contact Form" <${process.env.SMTP_USER}>`,
-      to: process.env.RECIPIENT_EMAIL || process.env.SMTP_USER,
+    await sendPostmarkEmail({
+      to: recipientEmail,
       replyTo: safeEmail,
       subject: `New contact from ${safeName}`,
       html: emailHtml,

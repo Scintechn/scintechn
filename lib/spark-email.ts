@@ -1,6 +1,6 @@
 import 'server-only';
-import nodemailer from 'nodemailer';
 import { escapeHtml } from './html';
+import { sendPostmarkEmail } from './postmark';
 import type { SparkPlan } from './spark-types';
 
 export interface SparkEmailContact {
@@ -15,37 +15,26 @@ export interface SparkEmailArgs {
 }
 
 /**
- * Sends the generated plan to RECIPIENT_EMAIL and, when the lead provided an
- * email, CC's the lead with the same plan. Throws if SMTP_USER is missing or
- * sendMail fails — the caller decides whether to swallow the error and still
- * return the plan (current behavior in app/api/spark/route.ts).
+ * Sends the generated plan via Postmark to RECIPIENT_EMAIL and CC's the lead
+ * when they provided an email. Throws on Postmark error — the caller in
+ * app/api/spark/route.ts catches and logs the lead so it remains recoverable
+ * even when delivery fails.
  */
 export async function sendSparkEmail({ plan, contact, idea }: SparkEmailArgs): Promise<void> {
-  if (!process.env.SMTP_USER) {
-    throw new Error('SMTP_USER not configured');
+  const recipientEmail = process.env.RECIPIENT_EMAIL;
+  if (!recipientEmail) {
+    throw new Error('RECIPIENT_EMAIL not configured');
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '465'),
-    secure: true,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    },
-  });
-
-  const recipientEmail = process.env.RECIPIENT_EMAIL || process.env.SMTP_USER;
   const cc = contact.kind === 'email' ? contact.normalized : undefined;
   const replyTo = contact.kind === 'email' ? contact.normalized : undefined;
 
-  await transporter.sendMail({
-    from: `"Scintechn Spark" <${process.env.SMTP_USER}>`,
+  await sendPostmarkEmail({
     to: recipientEmail,
     cc,
     replyTo,
     // Strip CRLF before slicing — defense against header injection if the
-    // model ever emits a newline mid-elevator (consistent with contact-route pattern).
+    // model ever emits a newline mid-elevator.
     subject: `[Spark] ${plan.elevator.replace(/[\r\n]+/g, ' ').slice(0, 80)}`,
     html: renderPlanHtml({ plan, contact, idea }),
     text: renderPlanText({ plan, contact, idea }),

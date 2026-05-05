@@ -29,7 +29,6 @@
     "lucide-react": "^0.553.0",
     "next": "^15.5.15",
     "next-intl": "^3.23.5",
-    "nodemailer": "^8.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.66.0",
@@ -39,7 +38,6 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/nodemailer": "^8.0.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
