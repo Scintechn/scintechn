@@ -1,85 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { createRateLimiter, getClientIp } from '@/lib/rate-limit';
+import { escapeHtml } from '@/lib/html';
+import { sendPostmarkEmail } from '@/lib/postmark';
 
 const MAX_NAME = 200;
 const MAX_EMAIL = 254;
 const MAX_MESSAGE = 5000;
 
-const RATE_WINDOW_MS = 60_000; // 1 minute
-const RATE_MAX = 3; // 3 submissions / window / IP
-
-// --- Rate-limit backend selection -----------------------------------------
-// Production: Upstash Redis when both env vars are set (durable, survives
-// cold starts, works across serverless instances).
-// Dev / fallback: in-memory Map (good enough on a single warm instance).
-
-const upstashLimiter = (() => {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Ratelimit({
-    redis: new Redis({ url, token }),
-    limiter: Ratelimit.slidingWindow(RATE_MAX, '60 s'),
-    prefix: 'scintechn:contact',
-    analytics: true,
-  });
-})();
-
-const ipHits = new Map<string, number[]>();
-
-function inMemoryCheck(ip: string): { ok: boolean; retryAfter: number } {
-  const now = Date.now();
-  const cutoff = now - RATE_WINDOW_MS;
-  const hits = (ipHits.get(ip) || []).filter((t) => t > cutoff);
-  if (hits.length >= RATE_MAX) {
-    const retryAfter = Math.ceil((hits[0]! + RATE_WINDOW_MS - now) / 1000);
-    return { ok: false, retryAfter: Math.max(retryAfter, 1) };
-  }
-  hits.push(now);
-  ipHits.set(ip, hits);
-  if (ipHits.size > 1000) {
-    for (const [k, v] of ipHits) {
-      const fresh = v.filter((t) => t > cutoff);
-      if (fresh.length === 0) ipHits.delete(k);
-      else ipHits.set(k, fresh);
-    }
-  }
-  return { ok: true, retryAfter: 0 };
-}
-
-async function checkRateLimit(ip: string): Promise<{ ok: boolean; retryAfter: number }> {
-  if (upstashLimiter) {
-    const { success, reset } = await upstashLimiter.limit(ip);
-    if (success) return { ok: true, retryAfter: 0 };
-    return { ok: false, retryAfter: Math.max(Math.ceil((reset - Date.now()) / 1000), 1) };
-  }
-  return inMemoryCheck(ip);
-}
-
-function getClientIp(request: NextRequest): string {
-  const xff = request.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0]!.trim();
-  const real = request.headers.get('x-real-ip');
-  if (real) return real.trim();
-  return 'unknown';
-}
+const rateLimiter = createRateLimiter({
+  prefix: 'scintechn:contact',
+  max: 3,
+  windowMs: 60_000,
+});
 
 const stripCrlf = (s: string) => s.replace(/[\r\n]+/g, ' ').trim();
-
-const escapeHtml = (s: string) =>
-  s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
-    const rate = await checkRateLimit(ip);
+    const rate = await rateLimiter.check(ip);
     if (!rate.ok) {
       return NextResponse.json(
         { error: 'Too many requests' },
@@ -123,15 +62,11 @@ export async function POST(request: NextRequest) {
     const htmlEmail = escapeHtml(safeEmail);
     const htmlMessage = escapeHtml(rawMessage).replace(/\n/g, '<br>');
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '465'),
-      secure: true,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
+    const recipientEmail = process.env.RECIPIENT_EMAIL;
+    if (!recipientEmail) {
+      console.error('[contact] RECIPIENT_EMAIL not configured');
+      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    }
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -176,9 +111,8 @@ export async function POST(request: NextRequest) {
       </html>
     `;
 
-    await transporter.sendMail({
-      from: `"Scintechn Contact Form" <${process.env.SMTP_USER}>`,
-      to: process.env.RECIPIENT_EMAIL || process.env.SMTP_USER,
+    await sendPostmarkEmail({
+      to: recipientEmail,
       replyTo: safeEmail,
       subject: `New contact from ${safeName}`,
       html: emailHtml,

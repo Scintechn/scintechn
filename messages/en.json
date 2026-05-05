@@ -81,6 +81,68 @@
     "paragraph2": "Our portfolio spans proptech, edtech, sports operations, consumer events and white-label SaaS — all built on a consistent Next.js + PostgreSQL + AI SDK platform, all shipped under sprint cadence with BDD-verified acceptance criteria.",
     "paragraph3": "We work with founders and operators who don't have six months to wait — and who'd rather see working software than another estimate."
   },
+  "spark": {
+    "eyebrow": "// SCINTECHN SPARK",
+    "title": "Describe your idea. Get a build plan in seconds.",
+    "subtitle": "Spark drafts a 4-week roadmap, recommended stack, and the questions we'd ask in the first call. Free. No fluff.",
+    "idea": {
+      "label": "Your idea",
+      "placeholder": "A B2B tool for scheduling field technicians with route optimization for plumbing teams..."
+    },
+    "contact": {
+      "label": "Email or mobile",
+      "placeholder": "you@company.com",
+      "help": "We'll send your plan here. No mailing list."
+    },
+    "cta": {
+      "draft": "Draft my plan",
+      "drafting": "Drafting…",
+      "talk": "Talk to us about this",
+      "talkPrefill": "I want to build: {idea}\n\nScintechn Spark drafted a 4-week plan — let's discuss it."
+    },
+    "result": {
+      "regionLabel": "Build plan",
+      "ready": "Ready to build it?",
+      "elevator": "Pitch",
+      "scope": {
+        "in": "In scope (v1)",
+        "out": "Out of scope"
+      },
+      "stack": "Stack",
+      "phases": "Phases",
+      "complexity": {
+        "S": "Small",
+        "M": "Medium",
+        "L": "Large"
+      },
+      "risks": "Risks",
+      "likelihood": {
+        "low": "Low",
+        "med": "Med",
+        "high": "High"
+      },
+      "impact": {
+        "low": "Low",
+        "med": "Med",
+        "high": "High"
+      },
+      "questions": "Open questions",
+      "dod": "DoD",
+      "likelihoodLabel": "Likelihood",
+      "impactLabel": "Impact"
+    },
+    "errors": {
+      "ideaRequired": "Describe your idea",
+      "ideaTooShort": "A bit more detail helps — at least 12 characters",
+      "ideaTooLong": "Keep it under 2000 characters",
+      "contactRequired": "Email or mobile is required",
+      "contactInvalid": "Enter a valid email or international mobile (e.g. +351 931 852 422)",
+      "rateLimited": "You've drafted a few plans already. Try again in an hour.",
+      "budgetExceeded": "Spark is at capacity for today. Use the contact form below.",
+      "generic": "Something went wrong. Try again, or use the contact form below."
+    },
+    "refusal": "Spark only drafts software builds — try describing a product or workflow you want to build."
+  },
   "contact": {
     "eyebrow": "Start a project",
     "title": "Tell us what you want to build.",

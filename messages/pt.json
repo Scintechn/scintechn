@@ -81,6 +81,68 @@
     "paragraph2": "Nosso portfólio cobre proptech, edtech, operações esportivas, eventos e SaaS white-label — todos construídos sobre uma plataforma consistente de Next.js + PostgreSQL + AI SDK, todos entregues em cadência de sprint com critérios de aceitação verificados por BDD.",
     "paragraph3": "Trabalhamos com fundadores e operadores que não têm seis meses para esperar — e que preferem ver software funcionando a mais uma estimativa."
   },
+  "spark": {
+    "eyebrow": "// SCINTECHN SPARK",
+    "title": "Descreva sua ideia. Receba um plano de entrega em segundos.",
+    "subtitle": "O Spark desenha um roteiro de 4 semanas, a stack recomendada e as perguntas que faríamos na primeira conversa. Grátis. Sem enrolação.",
+    "idea": {
+      "label": "Sua ideia",
+      "placeholder": "Uma ferramenta B2B para agendamento de técnicos com otimização de rota para equipes de manutenção..."
+    },
+    "contact": {
+      "label": "Email ou celular",
+      "placeholder": "voce@empresa.com",
+      "help": "Enviaremos seu plano para cá. Sem lista de mailing."
+    },
+    "cta": {
+      "draft": "Gerar meu plano",
+      "drafting": "Gerando…",
+      "talk": "Vamos conversar sobre isso",
+      "talkPrefill": "Quero construir: {idea}\n\nO Scintechn Spark desenhou um plano de 4 semanas — vamos conversar."
+    },
+    "result": {
+      "regionLabel": "Plano de build",
+      "ready": "Pronto para construir?",
+      "elevator": "Pitch",
+      "scope": {
+        "in": "No escopo (v1)",
+        "out": "Fora do escopo"
+      },
+      "stack": "Stack",
+      "phases": "Fases",
+      "complexity": {
+        "S": "Pequeno",
+        "M": "Médio",
+        "L": "Grande"
+      },
+      "risks": "Riscos",
+      "likelihood": {
+        "low": "Baixa",
+        "med": "Média",
+        "high": "Alta"
+      },
+      "impact": {
+        "low": "Baixo",
+        "med": "Médio",
+        "high": "Alto"
+      },
+      "questions": "Perguntas em aberto",
+      "dod": "DoD",
+      "likelihoodLabel": "Probabilidade",
+      "impactLabel": "Impacto"
+    },
+    "errors": {
+      "ideaRequired": "Descreva sua ideia",
+      "ideaTooShort": "Um pouco mais de detalhe ajuda — pelo menos 12 caracteres",
+      "ideaTooLong": "Mantenha abaixo de 2000 caracteres",
+      "contactRequired": "Email ou celular é obrigatório",
+      "contactInvalid": "Informe um email válido ou celular internacional (ex.: +351 931 852 422)",
+      "rateLimited": "Você já gerou alguns planos. Tente novamente em uma hora.",
+      "budgetExceeded": "O Spark atingiu a capacidade do dia. Use o formulário de contato abaixo.",
+      "generic": "Algo deu errado. Tente de novo ou use o formulário de contato abaixo."
+    },
+    "refusal": "O Spark só desenha planos para construir software — tente descrever um produto ou fluxo de trabalho que você quer construir."
+  },
   "contact": {
     "eyebrow": "Iniciar um projeto",
     "title": "Conte o que você quer construir.",

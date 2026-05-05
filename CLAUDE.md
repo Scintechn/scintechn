@@ -21,11 +21,13 @@ Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/
 
 ## Environment
 
-`.env.local` is required for the contact API to work. See `.env.example`. Variables consumed by `app/api/contact/route.ts`:
+`.env.local` is required for the contact and Spark APIs. See `.env.example`. Required variables:
 
-- `SMTP_HOST`, `SMTP_PORT` (defaults: smtp.gmail.com:465, secure SSL)
-- `SMTP_USER`, `SMTP_PASSWORD` (Gmail requires an App Password, not the account password)
-- `RECIPIENT_EMAIL` (falls back to `SMTP_USER` if unset)
+- `POSTMARK_SERVER_TOKEN` — Postmark Server API Token (transactional email for both `/api/contact` and `/api/spark`)
+- `POSTMARK_FROM_EMAIL` — verified Sender Signature or address on a verified Domain (e.g. `development@scintechn.com`)
+- `RECIPIENT_EMAIL` — where contact submissions and Spark plans land (e.g. `contact@scintechn.com`)
+- `OPENROUTER_API_KEY` — required for Spark; never exposed to client bundles
+- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — optional, enables distributed rate-limit and Spark daily-budget counter; in-memory fallback otherwise
 
 ## Architecture
 
@@ -61,8 +63,16 @@ Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/
 
 ### Forms & API
 - Contact form (`components/Contact.tsx`) uses **React Hook Form** (no Zod resolver — validation is built into RHF's `register` rules with translated error messages). POSTs to `/api/contact`.
-- API route validates required fields, enforces max lengths (name 200, email 254, message 5000), strips CRLF from values used in SMTP headers (header-injection protection), and HTML-escapes values used in the email body (XSS protection). Sends through Nodemailer; returns 400 on validation failure, 413 on length, 500 on send failure.
-- **No rate limiting** — anyone on the internet can POST. Add Vercel KV throttle, Cloudflare Turnstile, or similar before the site goes wide.
+- API route validates required fields, enforces max lengths (name 200, email 254, message 5000), strips CRLF from values used in email headers (header-injection protection), and HTML-escapes values used in the email body via shared `lib/html.ts` (XSS protection). Returns 400 on validation failure, 413 on length, 500 on send failure.
+- Both `/api/contact` and `/api/spark` send transactional email via **Postmark HTTP API** (`lib/postmark.ts` — `sendPostmarkEmail()`, direct `fetch` to `api.postmarkapp.com/email`, no SDK). The From address (`POSTMARK_FROM_EMAIL`) must be a verified Sender Signature or on a verified Domain or Postmark returns `ErrorCode 412`.
+- Both routes rate-limit via the shared factory in `lib/rate-limit.ts` (Upstash Redis when `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` are set, in-memory `Map` fallback otherwise). Contact: 3/min/IP. Spark: 5/hr/IP. Cloudflare Turnstile is still worth adding before the site goes wide.
+- **Spark scoping endpoint (`/api/spark` + `components/Spark.tsx`)**: hero-adjacent engagement device that turns a one-line product idea into a structured 4-week build plan via Claude Haiku 4.5 (OpenRouter). Visitor pastes idea + email-or-mobile → server validates → calls OpenRouter → schema-validates response → emails the plan to RECIPIENT_EMAIL (and to the lead when contact is an email) → renders the plan in the UI. The result panel's "Talk to us about this →" CTA pre-fills the contact form via sessionStorage.
+  - **Env**: `OPENROUTER_API_KEY` required (server-only, never reaches the client bundle). Email delivery uses the shared Postmark integration (`POSTMARK_SERVER_TOKEN` + `POSTMARK_FROM_EMAIL`). Optional Upstash vars enable distributed rate-limit + budget counter; otherwise in-memory fallback (fine on a single warm instance, resets on cold start).
+  - **Daily $-cap**: `DAILY_BUDGET_USD = 5` in `lib/spark-budget.ts`; pre-flight `wouldExceedBudget` check + post-call `INCRBYFLOAT` (Upstash) or Map increment (in-memory). Returns 503 on exceed.
+  - **Security**: per-request 16-byte hex nonce wraps user input as `<user_input id="${nonce}">…</user_input>`; control-char strip + tag-neutralization in `sanitizeIdea`; system-prompt SECURITY RULES block; OpenRouter `response_format: json_object`; output canary check (rejects responses containing `<user_input id=`, `INTERNAL APPROACH`, `OUTPUT FORMAT`, `SECURITY RULES`, `OPENROUTER_API_KEY`, `process.env`, the per-request nonce, or the refusal sentinel outside its dedicated field); schema + enum + length validation; markdown-fence stripping; honeypot + <2s dwell guard. Full threat model in `docs/spark-plan.md` §10.
+  - **Bilingual**: Haiku detects input language and mirrors. Single codepath.
+  - **Email failure handling**: deliberate deviation from "fail loud" — if `sendPostmarkEmail` throws (network, auth, sender-not-verified, or any non-zero ErrorCode), the lead (idea + plan + contact) is logged at `console.error` level and the plan is still returned 200 to the client. The lead is recoverable from the server log even when delivery is broken.
+  - **Files**: `app/api/spark/route.ts`, `lib/spark-{types,security,budget,email}.ts`, `lib/prompts/spark.ts`, `lib/postmark.ts` (shared Postmark wrapper), `lib/html.ts` (shared escapeHtml extracted from contact route), `components/Spark.tsx`. Plan: `docs/spark-plan.md`.
 
 ### SEO / Analytics
 - Metadata is generated per-locale in `app/[locale]/layout.tsx` (`generateMetadata` reads the `metadata` namespace) and re-exported per-page in `page.tsx`. `metadataBase` and `alternates.languages` are set so OG/canonical URLs resolve correctly.

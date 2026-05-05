@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, useInView } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -25,7 +25,40 @@ export default function Contact() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<FormData>();
+
+  // Bridge from <Spark /> "Talk to us about this →": Spark writes a localized
+  // pre-fill message to sessionStorage and points the URL hash to #contact.
+  // We drain it both on mount (cross-page nav) and on hashchange (same-page nav).
+  useEffect(() => {
+    const drain = () => {
+      try {
+        const raw = sessionStorage.getItem('contact-prefill');
+        if (!raw) return;
+        const parsed: unknown = JSON.parse(raw);
+        if (
+          parsed &&
+          typeof parsed === 'object' &&
+          'message' in parsed &&
+          typeof (parsed as { message: unknown }).message === 'string'
+        ) {
+          setValue('message', (parsed as { message: string }).message, {
+            shouldDirty: true,
+          });
+        }
+        sessionStorage.removeItem('contact-prefill');
+      } catch {
+        // ignore — sessionStorage unavailable or malformed payload
+      }
+    };
+    drain();
+    const onHashChange = () => {
+      if (window.location.hash === '#contact') drain();
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [setValue]);
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
