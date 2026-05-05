@@ -17,7 +17,24 @@ type FormData = {
   website?: string; // honeypot — must remain empty
 };
 
-import type { SparkPlan } from '@/lib/spark-types';
+import type { SparkPlan, Currency } from '@/lib/spark-types';
+
+// Map our 3 supported currencies to the locale that produces the most natural
+// currency-formatted string (right symbol, grouping separator, decimal mark).
+// USD → en-US ("$45,000"); BRL → pt-BR ("R$ 45.000"); EUR → pt-PT ("45 000 €").
+const LOCALE_BY_CURRENCY: Record<Currency, string> = {
+  USD: 'en-US',
+  BRL: 'pt-BR',
+  EUR: 'pt-PT',
+};
+
+function formatCurrency(amount: number, currency: Currency): string {
+  return new Intl.NumberFormat(LOCALE_BY_CURRENCY[currency], {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 
 type ApiSuccess = { ok: true; plan: SparkPlan };
 type ApiRefusal = { ok: true; refusal: true };
@@ -305,6 +322,38 @@ export default function Spark() {
                 </PlanSection>
 
                 <PlanSection delay={30} reduceMotion={reduceMotion}>
+                  <div className="rounded-xl border-2 border-primary bg-primary/5 p-5 md:p-6">
+                    <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
+                      {`// ${t('result.coi.title')}`}
+                    </p>
+                    {/* flex-wrap with non-breaking tokens so the range never */}
+                    {/* breaks mid-amount on a 375px viewport (BRL/EUR ranges */}
+                    {/* are wider than ~255px usable inside the panel). */}
+                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                      <span className="whitespace-nowrap">
+                        {formatCurrency(result.plan.costOfInaction.low, result.plan.costOfInaction.currency)}
+                      </span>
+                      <span className="whitespace-nowrap">–</span>
+                      <span className="whitespace-nowrap">
+                        {formatCurrency(result.plan.costOfInaction.high, result.plan.costOfInaction.currency)}
+                      </span>
+                      <span className="text-muted-foreground text-base font-normal whitespace-nowrap">
+                        {t(`result.coi.period.${result.plan.costOfInaction.period}`)}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      <span className="font-mono text-[11px] uppercase tracking-[0.12em] mr-1">
+                        {t('result.coi.basisLabel')}:
+                      </span>
+                      {result.plan.costOfInaction.basis}
+                    </p>
+                    <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                      {t('result.coi.disclaimer')}
+                    </p>
+                  </div>
+                </PlanSection>
+
+                <PlanSection delay={60} reduceMotion={reduceMotion}>
                   <div className="grid gap-6 md:grid-cols-2">
                     <div>
                       <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
@@ -337,7 +386,7 @@ export default function Spark() {
                   </div>
                 </PlanSection>
 
-                <PlanSection delay={60} reduceMotion={reduceMotion}>
+                <PlanSection delay={90} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.stack')}
                   </h3>
@@ -353,7 +402,7 @@ export default function Spark() {
                   </div>
                 </PlanSection>
 
-                <PlanSection delay={90} reduceMotion={reduceMotion}>
+                <PlanSection delay={120} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.phases')}
                   </h3>
@@ -390,7 +439,7 @@ export default function Spark() {
                   </ul>
                 </PlanSection>
 
-                <PlanSection delay={120} reduceMotion={reduceMotion}>
+                <PlanSection delay={150} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.risks')}
                   </h3>
@@ -432,7 +481,7 @@ export default function Spark() {
                   </ul>
                 </PlanSection>
 
-                <PlanSection delay={150} reduceMotion={reduceMotion}>
+                <PlanSection delay={180} reduceMotion={reduceMotion}>
                   <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
                     {t('result.questions')}
                   </h3>

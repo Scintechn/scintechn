@@ -158,8 +158,20 @@ export interface SparkPhase {
   complexity: Complexity;   // S / M / L — sets expectation, sanity-checks the slice
 }
 
+// Cost of inaction — quantifies what the business loses by NOT shipping.
+// Currency is server-detected from contact (+55 → BRL, +351 → EUR, else USD)
+// and locked in the validator so the model can't override.
+export interface CostOfInaction {
+  currency: 'USD' | 'BRL' | 'EUR';
+  low: number;                 // > 0
+  high: number;                // >= low, <= 100_000_000
+  period: 'month' | 'quarter' | 'year';
+  basis: string;               // 30-200 chars, must contain a non-zero digit
+}
+
 export interface SparkPlan {
   elevator: string;            // 1-sentence product reframing of the idea
+  costOfInaction: CostOfInaction;
   scope: {
     in:  string[];             // 3-5 capabilities in v1 scope
     out: string[];             // 2-3 things explicitly deferred
@@ -181,6 +193,11 @@ export interface SparkRefusal {
 | Field | Max chars | Min items | Max items | Allowed values |
 |-------|-----------|-----------|-----------|----------------|
 | elevator | 280 | — | — | — |
+| costOfInaction.currency | — | — | — | `'USD'`, `'BRL'`, `'EUR'` (enum + server-locked to detected value) |
+| costOfInaction.low | — | — | — | positive finite number |
+| costOfInaction.high | — | — | — | positive finite number, ≥ `low`, ≤ 100,000,000 |
+| costOfInaction.period | — | — | — | `'month'`, `'quarter'`, `'year'` (enum) |
+| costOfInaction.basis | 30–200 | — | — | must contain at least one non-zero digit (rejects hollow "no math" responses) |
 | scope.in[] | 120 each | 3 | 6 | — |
 | scope.out[] | 120 each | 2 | 4 | — |
 | stack[] | 80 each | 3 | 6 | — |
@@ -593,7 +610,35 @@ Most time still goes into prompt iteration (Phase 2) and the result-panel render
 
 Spark is live in production as of 2026-05-05. The build followed the v3 plan with the deviations and additions listed below — all in the squash commit `45c4cd9` on `main`.
 
-### As-built summary
+### Post-launch v2 — Cost of Inaction (2026-05-05)
+
+Same-day addition: every plan now ships with a `costOfInaction` block that quantifies what the business loses by NOT shipping the build. Goals: (a) lift conversion via loss-aversion framing — "what waiting costs you" lands harder than "what we'll build" — and (b) make the plan feel like consulting, not vending. Built on `feat/spark-coi` across two phases.
+
+**Schema** (added to `lib/spark-types.ts`): `CostOfInaction { currency, low, high, period, basis }` — placed between `elevator` and `scope`. Required field on every successful plan.
+
+**Currency is server-authoritative**, not a model guess. `detectCurrency(contact)` in `app/api/spark/route.ts` maps the validated contact: phone `+55*` → `BRL`, `+351*` → `EUR`, everything else (incl. all email contacts) → `USD`. The detected currency is passed into the prompt as a constraint AND into the validator as `expectedCurrency`. The validator rejects with 502 if the model emits a different currency.
+
+**Hallucination defenses (multi-layer):**
+1. Prompt rule: `basis` MUST contain a numeric calculation chain (e.g., *"20 missed appointments/month × $500 × 12 = $120K/year"*); avoid wide bands; err low rather than high.
+2. **FINAL CHECK reminder** appended after the few-shot examples — placed where it's the last thing in context before generation. This fixed a consistent failure case where Haiku was dropping `phases[].complexity` on long responses for certain English ideas.
+3. Validator: enums (currency + period), positive finite numbers, `low ≤ high`, `high ≤ 100M`, `basis` 30–200 chars, **`basis` must contain at least one non-zero digit** (rejects fully-hollow strings like *"savings will be significant for the business"* — narrative without math, or *"0 + 0 + 0 = 0 over the year"* — equation but only zeros). Semi-hollow strings that contain incidental non-zero digits ("12 months", etc.) still pass; perfect hallucination detection in regex isn't tractable, so the defense leans on the prompt + 30-char min + retry rather than perfect basis classification. Reject extra keys on COI object.
+4. **Currency lock** in validator (server-passed `expectedCurrency` must equal `coi.currency`).
+5. **Single retry on validation failure** in `app/api/spark/route.ts` — the COI-loaded schema is brittle in Haiku (~5–10% first-try miss rate observed); a second generation usually succeeds. Network/upstream/timeout errors are NOT retried (typically persistent + user already waiting).
+
+**UI render** (Phase 2, `components/Spark.tsx`): violet-bordered callout (`border-2 border-primary bg-primary/5`) sits between Elevator and Scope — the only colored-border section in the result panel, by design. The currency range is the visual anchor (`text-3xl md:text-4xl font-bold`). `Intl.NumberFormat` with locale-by-currency (`USD → en-US`, `BRL → pt-BR`, `EUR → pt-PT`) handles formatting. Period suffix and disclaimer are i18n-keyed.
+
+**Email render** (Phase 2, `lib/spark-email.ts`): COI block in both HTML (inline-styled violet callout) and plain text. Labels are hardcoded English by design — emails go to the operator's inbox primarily, and the plan content itself is in the lead's language.
+
+**Constants** (Phase 2 also nudged): `MAX_OUTPUT_TOKENS` 2000 → 2500 because the COI section pushed full-spec plans toward the cap; `ESTIMATED_COST_USD` 0.012 → 0.015 to match the worst-case ceiling.
+
+**Out of scope** (deferred):
+- Per-currency magnitude bounds tighter than the universal 100M cap.
+- Periodicity-aware caps (a `month` value of 50M is implausible but a `year` value of 50M might be plausible for enterprise — current validator treats them the same).
+- Conversion analytics events (`spark_coi_rendered`, etc.) — same gap as the rest of Spark; revisit when traffic data starts mattering.
+
+---
+
+### Original v1 Spark — as-built summary
 
 - **Visitor flow**: works end-to-end. Idea + email/mobile → plan renders in ~5–10s on Haiku 4.5. EN and PT both verified live.
 - **Email delivery**: working to both `RECIPIENT_EMAIL` (`contact@scintechn.com`) and the lead's inbox via Postmark. Cross-domain verified live (after Postmark account approval).

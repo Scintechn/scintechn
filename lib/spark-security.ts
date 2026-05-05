@@ -172,8 +172,10 @@ export function validateSparkResponse(
   if (coi.low > coi.high) return null;
   if (coi.high > COI_HIGH_CEILING) return null;
   if (!isStr(coi.basis) || !strLenIn(coi.basis, COI_BASIS_MIN, COI_BASIS_MAX)) return null;
-  // Basis must contain a numeric calculation chain — at minimum, one digit.
-  if (!/\d/.test(coi.basis)) return null;
+  // Basis must contain a numeric calculation chain. Require at least one
+  // non-zero digit so a hollow string like "$0 lost daily for 12 months"
+  // (digits, but only zeros where it counts) doesn't slip through.
+  if (!/[1-9]/.test(coi.basis)) return null;
   // Reject extra keys on the COI object.
   for (const k of Object.keys(coi)) {
     if (!COI_KEYS.has(k)) return null;

@@ -1,7 +1,31 @@
 import 'server-only';
 import { escapeHtml } from './html';
 import { sendPostmarkEmail } from './postmark';
-import type { SparkPlan } from './spark-types';
+import type { SparkPlan, Currency } from './spark-types';
+
+// Email labels are intentionally hardcoded English (operator-facing primary
+// inbox); the plan content itself is in the lead's language. Threading i18n
+// into email render added complexity we deliberately avoided.
+
+const LOCALE_BY_CURRENCY: Record<Currency, string> = {
+  USD: 'en-US',
+  BRL: 'pt-BR',
+  EUR: 'pt-PT',
+};
+
+function formatCurrency(amount: number, currency: Currency): string {
+  return new Intl.NumberFormat(LOCALE_BY_CURRENCY[currency], {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+const PERIOD_SUFFIX_EMAIL: Record<'month' | 'quarter' | 'year', string> = {
+  year: '/year',
+  quarter: '/quarter',
+  month: '/month',
+};
 
 export interface SparkEmailContact {
   kind: 'email' | 'phone';
@@ -106,6 +130,12 @@ function renderPlanHtml({ plan, contact, idea }: SparkEmailArgs): string {
   .dod { color: #6B7280; font-size: 13px; margin-top: 4px; }
   .risk-meta { color: #6B7280; font-size: 12px; margin-left: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   .mit { color: #6B7280; font-size: 13px; margin-top: 4px; }
+  .coi { border: 2px solid hsl(270 60% 44%); background: rgba(112, 45, 180, 0.05); border-radius: 10px; padding: 18px 20px; margin: 16px 0 8px; }
+  .coi-amount { font-size: 26px; font-weight: 700; color: #0B0F14; line-height: 1.2; margin: 0 0 8px; }
+  .coi-period { color: #6B7280; font-size: 14px; font-weight: 400; margin-left: 6px; }
+  .coi-basis { color: #6B7280; font-size: 13px; line-height: 1.5; margin: 8px 0 0; }
+  .coi-basis-label { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 6px; }
+  .coi-disclaimer { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #6B7280; margin: 10px 0 0; }
   .footer { text-align: center; margin-top: 18px; color: #6B7280; font-size: 12px; }
 </style>
 </head>
@@ -129,6 +159,20 @@ function renderPlanHtml({ plan, contact, idea }: SparkEmailArgs): string {
 
       <h2>Elevator</h2>
       <p class="elevator">${e(plan.elevator)}</p>
+
+      <h2>Cost of inaction</h2>
+      <div class="coi">
+        <p class="coi-amount">
+          ${e(formatCurrency(plan.costOfInaction.low, plan.costOfInaction.currency))}
+          &ndash;
+          ${e(formatCurrency(plan.costOfInaction.high, plan.costOfInaction.currency))}
+          <span class="coi-period">${e(PERIOD_SUFFIX_EMAIL[plan.costOfInaction.period])}</span>
+        </p>
+        <p class="coi-basis">
+          <span class="coi-basis-label">Basis:</span>${e(plan.costOfInaction.basis)}
+        </p>
+        <p class="coi-disclaimer">Rough estimate, refined in the first call.</p>
+      </div>
 
       <h2>In scope (v1)</h2>
       <ul>${scopeIn}</ul>
@@ -165,6 +209,15 @@ function renderPlanText({ plan, contact, idea }: SparkEmailArgs): string {
   lines.push('');
   lines.push('ELEVATOR');
   lines.push(plan.elevator);
+  lines.push('');
+  lines.push('COST OF INACTION');
+  lines.push(
+    `${formatCurrency(plan.costOfInaction.low, plan.costOfInaction.currency)} - ` +
+      `${formatCurrency(plan.costOfInaction.high, plan.costOfInaction.currency)} ` +
+      `${PERIOD_SUFFIX_EMAIL[plan.costOfInaction.period]}`,
+  );
+  lines.push(`Basis: ${plan.costOfInaction.basis}`);
+  lines.push('(Rough estimate, refined in the first call.)');
   lines.push('');
   lines.push('IN SCOPE');
   for (const s of plan.scope.in) lines.push(`- ${s}`);
