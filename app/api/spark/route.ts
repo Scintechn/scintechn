@@ -9,14 +9,29 @@ import {
 import { buildSparkMessages } from '@/lib/prompts/spark';
 import { wouldExceedBudget, recordActualCost } from '@/lib/spark-budget';
 import { sendSparkEmail } from '@/lib/spark-email';
+import type { Currency } from '@/lib/spark-types';
+
+/**
+ * Map a validated contact to the user's likely currency. BR mobiles → BRL,
+ * PT mobiles → EUR, everyone else (incl. all email contacts) → USD. The
+ * currency is passed into the prompt as a hard constraint and into the
+ * validator as an expected value the model must honor.
+ */
+function detectCurrency(contact: { kind: 'email' | 'phone'; normalized: string }): Currency {
+  if (contact.kind === 'phone') {
+    if (contact.normalized.startsWith('+55')) return 'BRL';
+    if (contact.normalized.startsWith('+351')) return 'EUR';
+  }
+  return 'USD';
+}
 
 const MIN_IDEA_CHARS = 12;
 const MAX_IDEA_CHARS = 2500;
-// Schema worst case is ~6000 chars (~1800 tokens); 2000 leaves comfortable
-// headroom for the model's most-verbose plans (observed truncation at 1500
-// on richer outputs). Per-call cost ceiling rises to ~$0.012 at full output.
-const MAX_OUTPUT_TOKENS = 2000;
-const ESTIMATED_COST_USD = 0.012;
+// Schema worst case is ~6500 chars (~1950 tokens) once costOfInaction joined
+// the plan; 2500 leaves headroom and prevents Haiku from dropping required
+// fields on the tail of long responses. Per-call cost ceiling ~$0.0145.
+const MAX_OUTPUT_TOKENS = 2500;
+const ESTIMATED_COST_USD = 0.015;
 // Anthropic Haiku 4.5 published rates (2026-05). Verify on rate change.
 const HAIKU_INPUT_COST_PER_TOKEN = 1 / 1_000_000; // $1 per 1M input tokens
 const HAIKU_OUTPUT_COST_PER_TOKEN = 5 / 1_000_000; // $5 per 1M output tokens
@@ -33,6 +48,81 @@ const rateLimiter = createRateLimiter({
 interface OpenRouterResponse {
   choices?: Array<{ message?: { content?: string } }>;
   usage?: { prompt_tokens?: number; completion_tokens?: number };
+}
+
+type PlanAttemptResult =
+  | { ok: true; content: string; inputTokens: number; outputTokens: number }
+  | { ok: false; reason: 'timeout' | 'upstream' };
+
+/**
+ * Single OpenRouter invocation. Returns success with content + usage or a
+ * shape-typed failure. The caller owns retry/cost-recording logic so this
+ * helper stays pure (no console-error in success path, no budget side
+ * effects). Network/upstream failures are NOT retried by the caller —
+ * they're typically persistent within a request window. Only validation
+ * failures trigger a retry, since those are usually transient generation
+ * variance on the COI-loaded schema.
+ */
+async function callOpenRouter(
+  messages: Array<{ role: 'system' | 'user'; content: string }>,
+): Promise<PlanAttemptResult> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
+
+  let resp: Response;
+  try {
+    resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://scintechn.com',
+        'X-Title': 'Scintechn Spark',
+      },
+      body: JSON.stringify({
+        model: MODEL_SLUG,
+        messages,
+        max_tokens: MAX_OUTPUT_TOKENS,
+        temperature: 0.4,
+        response_format: { type: 'json_object' },
+      }),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeout);
+    if ((err as { name?: string }).name === 'AbortError') {
+      return { ok: false, reason: 'timeout' };
+    }
+    console.error('[spark] fetch failed:', err);
+    return { ok: false, reason: 'upstream' };
+  }
+  clearTimeout(timeout);
+
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => '');
+    console.error('[spark] OpenRouter non-2xx:', resp.status, text.slice(0, 500));
+    return { ok: false, reason: 'upstream' };
+  }
+
+  let upstream: OpenRouterResponse;
+  try {
+    upstream = (await resp.json()) as OpenRouterResponse;
+  } catch {
+    return { ok: false, reason: 'upstream' };
+  }
+
+  const content = upstream.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || content.length === 0) {
+    console.error('[spark] empty content in OpenRouter response');
+    return { ok: false, reason: 'upstream' };
+  }
+
+  return {
+    ok: true,
+    content,
+    inputTokens: upstream.usage?.prompt_tokens ?? 0,
+    outputTokens: upstream.usage?.completion_tokens ?? 0,
+  };
 }
 
 export async function POST(request: NextRequest) {
@@ -108,79 +198,55 @@ export async function POST(request: NextRequest) {
 
   const sanitized = sanitizeIdea(trimmedIdea);
   const nonce = generateNonce();
-  const { messages } = buildSparkMessages({ idea: sanitized, nonce });
+  const currency = detectCurrency(contact);
+  const { messages } = buildSparkMessages({ idea: sanitized, nonce, currency });
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
-
-  let openrouterResp: Response;
-  try {
-    openrouterResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://scintechn.com',
-        'X-Title': 'Scintechn Spark',
-      },
-      body: JSON.stringify({
-        model: MODEL_SLUG,
-        messages,
-        max_tokens: MAX_OUTPUT_TOKENS,
-        temperature: 0.4,
-        response_format: { type: 'json_object' },
-      }),
-      signal: controller.signal,
-    });
-  } catch (err) {
-    clearTimeout(timeout);
-    if ((err as { name?: string }).name === 'AbortError') {
-      return NextResponse.json({ error: 'timeout' }, { status: 504 });
-    }
-    console.error('[spark] fetch failed:', err);
-    return NextResponse.json({ error: 'upstream' }, { status: 502 });
-  }
-  clearTimeout(timeout);
-
-  if (!openrouterResp.ok) {
-    const text = await openrouterResp.text().catch(() => '');
-    console.error(
-      '[spark] OpenRouter non-2xx:',
-      openrouterResp.status,
-      text.slice(0, 500),
+  // One retry on validation failure. The COI-loaded schema is occasionally
+  // brittle in Haiku — generation variance can drop a required field or
+  // exceed a count cap (~5-10% of calls). Network/upstream failures are NOT
+  // retried (typically persistent and the user is already waiting).
+  let attempt = await callOpenRouter(messages);
+  if (!attempt.ok) {
+    return NextResponse.json(
+      { error: attempt.reason },
+      { status: attempt.reason === 'timeout' ? 504 : 502 },
     );
-    return NextResponse.json({ error: 'upstream' }, { status: 502 });
   }
 
-  let upstream: OpenRouterResponse;
-  try {
-    upstream = (await openrouterResp.json()) as OpenRouterResponse;
-  } catch {
-    return NextResponse.json({ error: 'upstream' }, { status: 502 });
-  }
+  let totalActualCostUsd =
+    attempt.inputTokens * HAIKU_INPUT_COST_PER_TOKEN +
+    attempt.outputTokens * HAIKU_OUTPUT_COST_PER_TOKEN;
 
-  const content = upstream.choices?.[0]?.message?.content;
-  if (typeof content !== 'string' || content.length === 0) {
-    console.error('[spark] empty content in OpenRouter response');
-    return NextResponse.json({ error: 'upstream' }, { status: 502 });
-  }
-
-  const validated = validateSparkResponse(content, nonce);
+  let validated = validateSparkResponse(attempt.content, nonce, currency);
   if (!validated) {
-    console.error(
-      '[spark] response failed validation. raw (truncated):',
-      content.slice(0, 1000),
+    console.warn(
+      '[spark] validation failed on attempt 1, retrying once. raw head:',
+      attempt.content.slice(0, 400),
     );
-    return NextResponse.json({ error: 'upstream' }, { status: 502 });
+    const retry = await callOpenRouter(messages);
+    if (!retry.ok) {
+      console.error('[spark] retry network failure:', retry.reason);
+      await recordActualCost(totalActualCostUsd);
+      return NextResponse.json(
+        { error: retry.reason },
+        { status: retry.reason === 'timeout' ? 504 : 502 },
+      );
+    }
+    totalActualCostUsd +=
+      retry.inputTokens * HAIKU_INPUT_COST_PER_TOKEN +
+      retry.outputTokens * HAIKU_OUTPUT_COST_PER_TOKEN;
+    validated = validateSparkResponse(retry.content, nonce, currency);
+    if (!validated) {
+      console.error(
+        '[spark] both attempts failed validation. last raw (truncated):',
+        retry.content.slice(0, 4000),
+      );
+      await recordActualCost(totalActualCostUsd);
+      return NextResponse.json({ error: 'upstream' }, { status: 502 });
+    }
   }
 
-  // Always record actual spend, even on refusal — it's real money.
-  const inputTokens = upstream.usage?.prompt_tokens ?? 0;
-  const outputTokens = upstream.usage?.completion_tokens ?? 0;
-  const actualCostUsd =
-    inputTokens * HAIKU_INPUT_COST_PER_TOKEN +
-    outputTokens * HAIKU_OUTPUT_COST_PER_TOKEN;
-  await recordActualCost(actualCostUsd);
+  await recordActualCost(totalActualCostUsd);
 
   if ('refusal' in validated) {
     return NextResponse.json({ ok: true, refusal: true }, { status: 200 });

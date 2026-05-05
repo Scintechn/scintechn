@@ -1,6 +1,8 @@
 export type Likelihood = 'low' | 'med' | 'high';
 export type Impact = 'low' | 'med' | 'high';
 export type Complexity = 'S' | 'M' | 'L';
+export type Currency = 'USD' | 'BRL' | 'EUR';
+export type Period = 'month' | 'quarter' | 'year';
 
 export interface SparkRisk {
   title: string;
@@ -16,8 +18,17 @@ export interface SparkPhase {
   complexity: Complexity;
 }
 
+export interface CostOfInaction {
+  currency: Currency;
+  low: number;
+  high: number;
+  period: Period;
+  basis: string;
+}
+
 export interface SparkPlan {
   elevator: string;
+  costOfInaction: CostOfInaction;
   scope: { in: string[]; out: string[] };
   stack: string[];
   phases: SparkPhase[];

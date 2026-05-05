@@ -5,6 +5,8 @@ import type {
   Likelihood,
   Impact,
   Complexity,
+  Currency,
+  Period,
 } from './spark-types';
 
 const MAX_IDEA_CHARS = 2500;
@@ -29,7 +31,21 @@ const CANARY_PATTERNS: RegExp[] = [
 const LIKELIHOODS: readonly Likelihood[] = ['low', 'med', 'high'];
 const IMPACTS: readonly Impact[] = ['low', 'med', 'high'];
 const COMPLEXITIES: readonly Complexity[] = ['S', 'M', 'L'];
-const PLAN_KEYS = new Set(['elevator', 'scope', 'stack', 'phases', 'risks', 'openQuestions']);
+const CURRENCIES: readonly Currency[] = ['USD', 'BRL', 'EUR'];
+const PERIODS: readonly Period[] = ['month', 'quarter', 'year'];
+const COI_HIGH_CEILING = 100_000_000;
+const COI_BASIS_MIN = 30;
+const COI_BASIS_MAX = 200;
+const PLAN_KEYS = new Set([
+  'elevator',
+  'costOfInaction',
+  'scope',
+  'stack',
+  'phases',
+  'risks',
+  'openQuestions',
+]);
+const COI_KEYS = new Set(['currency', 'low', 'high', 'period', 'basis']);
 
 export function generateNonce(): string {
   return randomBytes(8).toString('hex');
@@ -58,11 +74,19 @@ function isStrArr(v: unknown): v is string[] {
  * contract. Performs canary detection on the raw text first, then JSON.parse,
  * then strict schema + enum + length-cap validation per docs/spark-plan.md §8.
  *
+ * `expectedCurrency` is the currency the server detected from the lead's
+ * contact and instructed the model to use; we reject if the model deviated
+ * (defense against prompt drift or injection trying to swap currency).
+ *
  * Returns a typed `SparkResponse` (plan or refusal) on success, or `null` if
  * any check fails. Callers should log raw text on failure and return a generic
  * 502 to the client.
  */
-export function validateSparkResponse(rawJson: string, nonce: string): SparkResponse | null {
+export function validateSparkResponse(
+  rawJson: string,
+  nonce: string,
+  expectedCurrency: Currency,
+): SparkResponse | null {
   if (rawJson.includes(nonce)) {
     if (process.env.NODE_ENV !== 'production') console.warn('[spark-validate] reject: nonce echo');
     return null;
@@ -126,6 +150,35 @@ export function validateSparkResponse(rawJson: string, nonce: string): SparkResp
   // elevator
   if (!isStr(obj.elevator) || !strLenIn(obj.elevator, 1, 280)) return null;
 
+  // costOfInaction
+  if (!obj.costOfInaction || typeof obj.costOfInaction !== 'object' || Array.isArray(obj.costOfInaction)) {
+    return null;
+  }
+  const coi = obj.costOfInaction as Record<string, unknown>;
+  if (!isStr(coi.currency) || !CURRENCIES.includes(coi.currency as Currency)) return null;
+  // Currency lock: model must honor what the server passed in.
+  if (coi.currency !== expectedCurrency) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[spark-validate] reject: currency mismatch', {
+        expected: expectedCurrency,
+        got: coi.currency,
+      });
+    }
+    return null;
+  }
+  if (!isStr(coi.period) || !PERIODS.includes(coi.period as Period)) return null;
+  if (typeof coi.low !== 'number' || !Number.isFinite(coi.low) || coi.low <= 0) return null;
+  if (typeof coi.high !== 'number' || !Number.isFinite(coi.high) || coi.high <= 0) return null;
+  if (coi.low > coi.high) return null;
+  if (coi.high > COI_HIGH_CEILING) return null;
+  if (!isStr(coi.basis) || !strLenIn(coi.basis, COI_BASIS_MIN, COI_BASIS_MAX)) return null;
+  // Basis must contain a numeric calculation chain — at minimum, one digit.
+  if (!/\d/.test(coi.basis)) return null;
+  // Reject extra keys on the COI object.
+  for (const k of Object.keys(coi)) {
+    if (!COI_KEYS.has(k)) return null;
+  }
+
   // scope
   if (!obj.scope || typeof obj.scope !== 'object' || Array.isArray(obj.scope)) return null;
   const scope = obj.scope as Record<string, unknown>;
@@ -169,6 +222,13 @@ export function validateSparkResponse(rawJson: string, nonce: string): SparkResp
   // Rebuild a typed object so the return value can't carry attacker-controlled prototype pollution.
   return {
     elevator: obj.elevator,
+    costOfInaction: {
+      currency: coi.currency as Currency,
+      low: coi.low as number,
+      high: coi.high as number,
+      period: coi.period as Period,
+      basis: coi.basis as string,
+    },
     scope: { in: scope.in, out: scope.out },
     stack: obj.stack,
     phases: (obj.phases as Array<Record<string, unknown>>).map((p) => ({
