@@ -1,10 +1,10 @@
 # Scintechn Spark — Implementation Plan
 
-**Status:** Shipped to production · 2026-05-05 · merge commit `45c4cd9`
+**Status:** Shipped to production · v1 in merge commit `45c4cd9` (PR [#1](https://github.com/Scintechn/scintechn/pull/1)) · **v2 (Cost of Inaction)** in merge commit `66bcf73` (PR [#2](https://github.com/Scintechn/scintechn/pull/2))
 **Author:** Claude (planning + implementation)
 **Last updated:** 2026-05-05
 
-> Build complete. All four phases landed in PR [#1](https://github.com/Scintechn/scintechn/pull/1) (squash-merged). Production smoke-test green; Postmark cross-domain delivery confirmed live. See §21 *Shipped* below for the as-built summary, deviations from this plan, and post-launch additions.
+> Build complete. v1 (4 phases) and v2 (COI, 2 phases) both shipped on 2026-05-05. Production smoke-test green; Postmark cross-domain delivery confirmed live. See §21 *Shipped* for the as-built summary, deviations, and the post-launch v2 (Cost of Inaction) subsection at the top of that section.
 
 ---
 
