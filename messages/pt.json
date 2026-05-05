@@ -104,6 +104,16 @@
       "regionLabel": "Plano de build",
       "ready": "Pronto para construir?",
       "elevator": "Pitch",
+      "coi": {
+        "title": "Custo da inação",
+        "basisLabel": "Base",
+        "disclaimer": "Estimativa, refinada na primeira conversa.",
+        "period": {
+          "year": "/ano",
+          "month": "/mês",
+          "quarter": "/trimestre"
+        }
+      },
       "scope": {
         "in": "No escopo (v1)",
         "out": "Fora do escopo"

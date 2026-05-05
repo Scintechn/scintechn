@@ -104,6 +104,16 @@
       "regionLabel": "Build plan",
       "ready": "Ready to build it?",
       "elevator": "Pitch",
+      "coi": {
+        "title": "Cost of inaction",
+        "basisLabel": "Basis",
+        "disclaimer": "Rough estimate, refined in the first call.",
+        "period": {
+          "year": "/year",
+          "month": "/month",
+          "quarter": "/quarter"
+        }
+      },
       "scope": {
         "in": "In scope (v1)",
         "out": "Out of scope"
