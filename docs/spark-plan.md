@@ -1,8 +1,10 @@
 # Scintechn Spark — Implementation Plan
 
-**Status:** Draft for approval (v3 — phased delivery, pre-mortem dropped)
-**Author:** Claude (planning)
-**Last updated:** 2026-05-04
+**Status:** Shipped to production · 2026-05-05 · merge commit `45c4cd9`
+**Author:** Claude (planning + implementation)
+**Last updated:** 2026-05-05
+
+> Build complete. All four phases landed in PR [#1](https://github.com/Scintechn/scintechn/pull/1) (squash-merged). Production smoke-test green; Postmark cross-domain delivery confirmed live. See §21 *Shipped* below for the as-built summary, deviations from this plan, and post-launch additions.
 
 ---
 
@@ -583,8 +585,50 @@ Most time still goes into prompt iteration (Phase 2) and the result-panel render
 
 ---
 
-**Awaiting your approval on this v3 plan to start Phase 1.** Confirm:
-1. Plan as written is approved.
-2. Branching preference: direct `main` commits, or a `feat/spark` feature branch with a squash-merge PR at the end.
+**Approved on 2026-05-04.** Branch chosen: `feat/spark` with a squash-merge PR. Phase 1 began immediately.
 
-Once you confirm, I'll invoke `/create-feature` for Phase 1.
+---
+
+## 21. Shipped
+
+Spark is live in production as of 2026-05-05. The build followed the v3 plan with the deviations and additions listed below — all in the squash commit `45c4cd9` on `main`.
+
+### As-built summary
+
+- **Visitor flow**: works end-to-end. Idea + email/mobile → plan renders in ~5–10s on Haiku 4.5. EN and PT both verified live.
+- **Email delivery**: working to both `RECIPIENT_EMAIL` (`contact@scintechn.com`) and the lead's inbox via Postmark. Cross-domain verified live (after Postmark account approval).
+- **Bridge to contact form**: "Talk to us about this →" CTA writes a localized prefill to sessionStorage and scrolls to `#contact`; the contact form drains it on hashchange. Verified.
+- **Bilingual**: single codepath; Haiku detects input language and mirrors. PT plans render with PT labels (`Semana 1`, `Pequeno/Médio/Grande`, `Baixa/Média/Alta`, etc.).
+- **Security posture**: per-IP throttle (5/hr), daily $5 budget cap, full output validation (canary + schema + enum + length + JSON-fence stripping), nonce-wrapped user input, honeypot + 2-second dwell guard. Phase 2 red-team via curl: 6/6 injection probes refused or sanitized. No production-side leaks observed.
+- **Observability**: SMTP/Postmark failure path logs the full lead (idea + plan + contact) at `console.error` so leads remain recoverable from Vercel function logs even if delivery fails.
+
+### Deviations from this plan (caught in code review, applied before merge)
+
+| # | Deviation | Why |
+|---|-----------|-----|
+| 1 | `MAX_OUTPUT_TOKENS` 700 → 1500 → 2000 | Initial 700 truncated full-spec plans mid-JSON. 1500 fixed most; observed one further truncation at ~position 2017 on a verbose response, so bumped to 2000 (~$0.012 worst-case per call, well under the $5/day cap). |
+| 2 | JSON-fence stripping in `validateSparkResponse` | Even with `response_format: json_object` and explicit prompt rules, Haiku occasionally wraps output in ```json … ```. Strip optional outer fence after canary check, before `JSON.parse`. |
+| 3 | Canary set narrowed (§10 row 14) | Original `OPENROUTER`, `claude-haiku`, `anthropic/` canaries caused false positives on plans that legitimately recommended OpenRouter / Anthropic. Replaced with system-prompt-specific phrases (`<user_input id=`, `INTERNAL APPROACH`, `OUTPUT FORMAT`, `SECURITY RULES`, `OPENROUTER_API_KEY`, `process.env`, the per-request nonce, plus the refusal sentinel checked post-parse). |
+| 4 | `aria-live` region moved outside `AnimatePresence` | The original placement was inert — screen readers don't pick up newly-mounted live regions. Persistent `sr-only` region with `aria-atomic="true"` outside the conditional. |
+| 5 | Likelihood/impact badge background | Spec said `bg-secondary` but that's an undefined brand token, near-invisible on Paper. Switched to `border + bg-background`. |
+| 6 | Contact field `inputMode="email"` → `inputMode="text"` | Email-mode keyboard hides `+` on iOS, breaks phone input. `text` is dual-purpose. |
+| 7 | "Want this built?" → "Ready to build it?" | Stronger, more directive copy (matches the "delivery-led" voice). PT mirrored: "Pronto para construir?" |
+| 8 | `min-h-[44px]` on textarea + contact input | Touch-target safety (was implicitly ~44px via padding; explicit guard prevents future overrides from shrinking). |
+
+### Post-launch additions (not in original plan)
+
+| Addition | Reason |
+|----------|--------|
+| **Postmark HTTP API** replacing Nodemailer + Gmail SMTP | Gmail App Password kept rejecting in dev (535-5.7.8) and Postmark gives proper deliverability + structured errors + a single env var. Touches both `/api/contact` and `/api/spark`. New `lib/postmark.ts` wraps the API. Net −35 lines, one fewer dep (`nodemailer` removed). |
+| **`actions/checkout` v4 → v5 deprecation note** | GitHub forces Node 24 default on 2026-06-02. Pre-existing workflow files use v4 (Node 20). Future maintenance, not done at launch. |
+
+### Acceptance verification
+
+§16 functional + security checklist: **all items verified** during phased build (Phases 1–4) and confirmed in production smoke-test post-merge. Browser-only items (mobile viewport, reduced motion, sessionStorage drain on hashchange, visual fidelity) verified manually on the production deploy.
+
+### Operational reminders
+
+- **OpenRouter monthly cap**: set in dashboard as belt-and-suspenders alongside the in-app `DAILY_BUDGET_USD = 5`.
+- **Original OpenRouter key rotated** post-launch (it was shared in the build chat).
+- **Postmark single-sender** is in place. **Optional improvement**: verify the full `scintechn.com` domain in Postmark (DKIM TXT + Return-Path CNAME on DNS) for better inbox placement and freedom to send from any `@scintechn.com` address.
+- **No analytics on Spark conversion yet** — GTM is wired site-wide but no Spark-specific events. Worth adding `spark_submit`, `spark_plan_rendered`, `spark_talk_clicked` events when traffic data starts mattering.

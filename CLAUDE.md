@@ -40,7 +40,7 @@ Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/
 - Server components call `getTranslations({ locale, namespace })`; client components call `useTranslations(namespace)`. Locale params are async (`params: Promise<{ locale: string }>`) — Next 15 convention.
 
 ### Component layer
-- Page sections are imported and stacked in `app/[locale]/page.tsx`. Current order: `Header → Hero → Work → Approach → About → Contact → Footer`. The page also renders a skip-to-main-content link before the header. Reordering or removing one means editing that page file.
+- Page sections are imported and stacked in `app/[locale]/page.tsx`. Current order: `Header → Hero → Spark → Work → Approach → About → Contact → Footer`. The page also renders a skip-to-main-content link before the header. Reordering or removing one means editing that page file.
 - Most section components are `'use client'` because they use Framer Motion scroll animations (`useInView`) or form state. Server components are limited to layout/page/metadata files.
 - `components/ui/` is **shadcn/ui** (New York style, neutral base, Lucide icons — see `components.json`). Add new primitives via `npx shadcn@latest add <name>` rather than hand-rolling.
 - Path alias `@/*` maps to the repo root (see `tsconfig.json`). Standard imports: `@/components/...`, `@/components/ui/...`, `@/lib/utils`, `@/hooks/use-toast`.
