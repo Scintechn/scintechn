@@ -78,6 +78,7 @@ Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/
 ### SEO / Analytics
 - Metadata is generated per-locale in `app/[locale]/layout.tsx` (`generateMetadata` reads the `metadata` namespace) and re-exported per-page in `page.tsx`. `metadataBase` and `alternates.languages` are set so OG/canonical URLs resolve correctly.
 - The root layout injects: GTM container `GTM-KPXTTSRQ`, an Organization JSON-LD block (with EN/PT in `availableLanguage`), and a noscript GTM iframe. Update the GTM ID and JSON-LD `description` there.
+- **Spark + Contact funnel events** are pushed to `window.dataLayer` via `lib/analytics.ts` (`track(event, props)`). Funnel: `spark_view` → `spark_submit` → (`spark_plan_rendered` | `spark_refusal` | `spark_error`) → `spark_talk_clicked` → `contact_submit` → `contact_success`. All events carry `locale`. Contact-side events also carry `from_spark` so the funnel report can distinguish Spark-attributed contact submits from cold-start submits. Configure tags + triggers in the GTM container; nothing in the codebase needs to change to add a new GA4/PostHog/Plausible target — they all consume `dataLayer`.
 - `app/sitemap.ts` generates the sitemap; `app/[locale]/opengraph-image.tsx` produces the dynamic OG image. The OG image is rendered server-side (edge runtime) and currently hardcodes English copy — it does not localize per route.
 
 ## Reference docs in repo
