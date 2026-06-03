@@ -122,7 +122,8 @@ export async function POST(request: NextRequest) {
 
     // Best-effort Telegram notification — Postmark is the source of truth;
     // Telegram is a secondary push channel for instant owner alerts. Failures
-    // (missing env, network, rate-limit) are logged but never surface as 5xx.
+    // are logged but never surface as 5xx. Awaited (not fire-and-forget) so
+    // the Vercel function doesn't freeze before the fetch completes.
     const telegramText = [
       `🚀 <b>Scintechn — new contact</b>`,
       ``,
@@ -133,9 +134,13 @@ export async function POST(request: NextRequest) {
       escapeHtml(rawMessage),
     ].join('\n');
 
-    sendTelegramMessage({ text: telegramText }).catch((err) => {
+    console.log('[contact] firing telegram notify');
+    try {
+      await sendTelegramMessage({ text: telegramText });
+      console.log('[contact] telegram notify ok');
+    } catch (err) {
       console.error('[contact] telegram notify failed:', (err as Error).message);
-    });
+    }
 
     return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
   } catch (error) {

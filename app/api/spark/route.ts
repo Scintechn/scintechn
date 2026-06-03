@@ -272,11 +272,16 @@ export async function POST(request: NextRequest) {
   });
 
   // Secondary Telegram push (summary only — full plan is in the email).
-  // Best-effort: failures logged, never surfaced. Independent of email so
-  // both channels fire even if one is down.
-  sendSparkTelegram({ plan, contact, idea: trimmedIdea }).catch((err) => {
+  // Best-effort: failures logged, never surfaced. Awaited (not
+  // fire-and-forget) so the Vercel function doesn't freeze before the
+  // fetch completes.
+  console.log('[spark] firing telegram notify');
+  try {
+    await sendSparkTelegram({ plan, contact, idea: trimmedIdea });
+    console.log('[spark] telegram notify ok');
+  } catch (err) {
     console.error('[spark] telegram notify failed:', (err as Error).message);
-  });
+  }
 
   return NextResponse.json({ ok: true, plan }, { status: 200 });
 }

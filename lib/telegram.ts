@@ -23,9 +23,26 @@ export interface TelegramSendArgs {
  * Required env: TELEGRAM_BOT_TOKEN (from @BotFather), TELEGRAM_CHAT_ID
  * (chat id where the bot posts — your DM with the bot, or a group it's in).
  */
+// Telemetry tag is stable so log searches in Vercel work: filter `[telegram]`.
+const tag = '[telegram]';
+
 export async function sendTelegramMessage(args: TelegramSendArgs): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  // Surfacing env presence is the #1 thing we want from production logs.
+  // Tokens themselves are NOT logged — only "present + length" so we can tell
+  // missing-vs-empty-string-vs-truncated-paste without leaking the secret.
+  console.log(`${tag} env check`, {
+    hasToken: !!token,
+    tokenLen: token?.length ?? 0,
+    hasChatId: !!chatId,
+    chatIdLen: chatId?.length ?? 0,
+    // Telegram chat IDs are 9-13 digit ints (or "-100…" for supergroups); the
+    // first char tells us the rough shape without leaking the full id.
+    chatIdPrefix: chatId ? chatId.slice(0, 2) : null,
+  });
+
   if (!token || !chatId) {
     throw new Error(
       'Telegram not configured: set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID',
@@ -37,10 +54,16 @@ export async function sendTelegramMessage(args: TelegramSendArgs): Promise<void>
       ? args.text.slice(0, TELEGRAM_MAX_TEXT - 1) + '…'
       : args.text;
 
+  console.log(`${tag} sending`, {
+    textLen: text.length,
+    parseMode: args.parseMode ?? 'HTML',
+  });
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TELEGRAM_TIMEOUT_MS);
 
   let resp: Response;
+  const startedAt = Date.now();
   try {
     resp = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
       method: 'POST',
@@ -55,16 +78,28 @@ export async function sendTelegramMessage(args: TelegramSendArgs): Promise<void>
     });
   } catch (err) {
     clearTimeout(timeout);
+    const elapsed = Date.now() - startedAt;
     if ((err as { name?: string }).name === 'AbortError') {
+      console.error(`${tag} fetch aborted (timeout)`, { elapsedMs: elapsed });
       throw new Error('Telegram send timed out');
     }
+    console.error(`${tag} fetch threw`, { elapsedMs: elapsed, err: (err as Error).message });
     throw new Error(`Telegram fetch failed: ${(err as Error).message}`);
   }
   clearTimeout(timeout);
 
+  const elapsedMs = Date.now() - startedAt;
+  const rawBody = await resp.text().catch(() => '');
+  console.log(`${tag} response`, {
+    status: resp.status,
+    ok: resp.ok,
+    elapsedMs,
+    bodyHead: rawBody.slice(0, 400),
+  });
+
   let data: { ok?: boolean; description?: string; error_code?: number };
   try {
-    data = (await resp.json()) as typeof data;
+    data = JSON.parse(rawBody) as typeof data;
   } catch {
     throw new Error(`Telegram returned non-JSON (HTTP ${resp.status})`);
   }
