@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter, getClientIp } from '@/lib/rate-limit';
 import { escapeHtml } from '@/lib/html';
 import { sendPostmarkEmail } from '@/lib/postmark';
+import { sendTelegramMessage } from '@/lib/telegram';
 
 const MAX_NAME = 200;
 const MAX_EMAIL = 254;
@@ -117,6 +118,23 @@ export async function POST(request: NextRequest) {
       subject: `New contact from ${safeName}`,
       html: emailHtml,
       text: `Name: ${safeName}\nEmail: ${safeEmail}\n\nMessage:\n${rawMessage}`,
+    });
+
+    // Best-effort Telegram notification — Postmark is the source of truth;
+    // Telegram is a secondary push channel for instant owner alerts. Failures
+    // (missing env, network, rate-limit) are logged but never surface as 5xx.
+    const telegramText = [
+      `🚀 <b>Scintechn — new contact</b>`,
+      ``,
+      `<b>Name:</b> ${htmlName}`,
+      `<b>Email:</b> ${htmlEmail}`,
+      ``,
+      `<b>Message:</b>`,
+      escapeHtml(rawMessage),
+    ].join('\n');
+
+    sendTelegramMessage({ text: telegramText }).catch((err) => {
+      console.error('[contact] telegram notify failed:', (err as Error).message);
     });
 
     return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
