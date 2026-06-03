@@ -9,6 +9,7 @@ import {
 import { buildSparkMessages } from '@/lib/prompts/spark';
 import { wouldExceedBudget, recordActualCost } from '@/lib/spark-budget';
 import { sendSparkEmail } from '@/lib/spark-email';
+import { sendSparkTelegram } from '@/lib/spark-telegram';
 import type { Currency } from '@/lib/spark-types';
 
 /**
@@ -268,6 +269,13 @@ export async function POST(request: NextRequest) {
       plan,
       error: (err as Error).message,
     });
+  });
+
+  // Secondary Telegram push (summary only — full plan is in the email).
+  // Best-effort: failures logged, never surfaced. Independent of email so
+  // both channels fire even if one is down.
+  sendSparkTelegram({ plan, contact, idea: trimmedIdea }).catch((err) => {
+    console.error('[spark] telegram notify failed:', (err as Error).message);
   });
 
   return NextResponse.json({ ok: true, plan }, { status: 200 });
