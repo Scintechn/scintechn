@@ -3,6 +3,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import '../globals.css';
 
 const GTM_ID = 'GTM-KPXTTSRQ';
@@ -134,6 +135,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
+import { track } from '@/lib/analytics';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -64,6 +65,14 @@ export default function Header() {
             <li>
               <a
                 href="#contact"
+                onClick={() =>
+                  track('cta_click', {
+                    location: 'header',
+                    label: 'start_project',
+                    destination: '#contact',
+                    locale,
+                  })
+                }
                 className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-primary transition-colors hover:text-primary/80"
               >
                 {t('startProject')}
@@ -131,7 +140,15 @@ export default function Header() {
                 <a
                   href="#contact"
                   className="inline-flex items-center gap-1.5 py-3 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-primary"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    track('cta_click', {
+                      location: 'header_mobile',
+                      label: 'start_project',
+                      destination: '#contact',
+                      locale,
+                    });
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   {t('startProject')}
                   <ArrowRight className="h-3.5 w-3.5" />
