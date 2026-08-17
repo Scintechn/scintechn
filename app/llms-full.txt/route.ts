@@ -8,7 +8,8 @@ import { SITE, capabilities, products } from '@/lib/site-data';
  * app/llms.txt/route.ts.
  */
 
-export const dynamic = 'force-static';
+/** Dynamic for the same Content-Type reason as app/llms.txt/route.ts. */
+export const dynamic = 'force-dynamic';
 
 const TEXT_HEADERS = {
   'Content-Type': 'text/plain; charset=utf-8',

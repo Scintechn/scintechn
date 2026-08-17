@@ -4,6 +4,7 @@ import { Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/next';
+import { SITE } from '@/lib/site-data';
 import { siteGraph } from '@/lib/structured-data';
 import '../globals.css';
 
@@ -37,7 +38,7 @@ export async function generateMetadata({
     keywords:
       'AI software house, AI agency, custom AI development, AI SaaS, agentic AI, software delivery, BDD, Next.js, Brazil, worldwide',
     authors: [{ name: 'Scintechn' }],
-    metadataBase: new URL('https://scintechn.com'),
+    metadataBase: new URL(SITE.baseUrl),
     alternates: {
       canonical: `/${locale}`,
       languages: {
@@ -48,7 +49,7 @@ export async function generateMetadata({
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: `https://scintechn.com/${locale}`,
+      url: `${SITE.baseUrl}/${locale}`,
       siteName: 'Scintechn',
       locale: locale === 'pt' ? 'pt_BR' : 'en_US',
       type: 'website',

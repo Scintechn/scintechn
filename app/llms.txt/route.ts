@@ -10,7 +10,15 @@ import { SITE, capabilities, products } from '@/lib/site-data';
  * containing a dot, so this is served as-is rather than redirected to /en.
  */
 
-export const dynamic = 'force-static';
+/**
+ * Rendered per request rather than prerendered: Vercel serves the bodies of
+ * statically prerendered route handlers as `text/html` regardless of the
+ * Content-Type recorded in the prerender metadata (robots.txt escapes this
+ * only because Next's metadata conventions get special handling). A dynamic
+ * handler's own headers are always honoured, and `s-maxage` below means the
+ * edge still serves a cached copy — so this costs nothing in practice.
+ */
+export const dynamic = 'force-dynamic';
 
 const TEXT_HEADERS = {
   'Content-Type': 'text/plain; charset=utf-8',
