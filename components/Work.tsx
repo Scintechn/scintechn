@@ -4,42 +4,7 @@ import { useTranslations } from 'next-intl';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-
-type ProductKey = 'flowdeski' | 'rentfy' | 'riopatinacao' | 'carna26' | 'mayway';
-
-type Product = {
-  key: ProductKey;
-  url: string | null;
-  stack: string[];
-};
-
-const products: Product[] = [
-  {
-    key: 'flowdeski',
-    url: 'https://flowdeski.com',
-    stack: ['Next.js', 'PostgreSQL', 'OpenRouter AI', 'Stripe Connect', 'Evolution API'],
-  },
-  {
-    key: 'rentfy',
-    url: 'https://www.getrentfy.com',
-    stack: ['Next.js', 'Drizzle', 'PostgreSQL', 'Vercel AI SDK', 'Stripe'],
-  },
-  {
-    key: 'riopatinacao',
-    url: 'https://www.riopatinacao.com',
-    stack: ['Next.js', 'PostgreSQL', 'BDD / Gherkin', 'Vitest', 'Playwright', 'Cucumber'],
-  },
-  {
-    key: 'carna26',
-    url: 'https://carna26-rio.vercel.app/discover',
-    stack: ['Next.js', 'Supabase', 'Stripe', 'Python', 'Playwright'],
-  },
-  {
-    key: 'mayway',
-    url: 'https://mayway.vercel.app/en',
-    stack: ['Next.js 16', 'TypeScript', 'Tailwind', 'shadcn/ui', 'next-intl'],
-  },
-];
+import { products } from '@/lib/site-data';
 
 export default function Work() {
   const t = useTranslations('work');

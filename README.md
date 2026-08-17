@@ -25,7 +25,8 @@ The portfolio rendered on the site:
 - **Capabilities** (`<Capabilities />` section): the company's delivery surface stated as four composable capabilities — AI Product Engineering, Automation & AI Agents (n8n, Make, Salesforce Agentforce, GoHighLevel), Integrations, and Run & Support. See [`docs/capabilities-section-draft.md`](docs/capabilities-section-draft.md) for the copy rationale and follow-ups.
 - **Contact form** (`/api/contact`): RHF + Postmark, rate-limited, honeypot + CRLF/HTML hardening.
 - **Dynamic OG image** rendered server-side at `/[locale]/opengraph-image`.
-- **Sitemap + JSON-LD Organization** for SEO.
+- **Agent-readable surface** — [`/llms.txt`](https://scintechn.com/llms.txt) (llmstxt.org index) and [`/llms-full.txt`](https://scintechn.com/llms-full.txt) (the whole site as markdown) let an AI agent capture the portfolio in one fetch; `/robots.txt` is generated and names the AI crawlers explicitly; `/sitemap.xml` lists the two locale URLs.
+- **JSON-LD `@graph`** — `Organization` (legal entity, CNPJ, profiles, tech `knowsAbout`, capability `OfferCatalog`), `WebSite`, and an `ItemList` of the five products as `SoftwareApplication` nodes, localized per route.
 
 ## Stack
 
@@ -94,20 +95,26 @@ The Postmark From address must be a **verified Sender Signature** or an address 
 ```
 app/
 ├── [locale]/                # /en + /pt routes
-│   ├── layout.tsx           # GTM, fonts, JSON-LD, metadata
-│   ├── page.tsx             # Hero → Spark → Work → Approach → About → Contact
+│   ├── layout.tsx           # GTM, fonts, JSON-LD @graph, metadata
+│   ├── page.tsx             # Hero → Spark → Work → Capabilities → Approach → About → Contact
 │   └── opengraph-image.tsx
 ├── api/
 │   ├── contact/             # Contact form (Postmark, rate-limited, honeypot)
 │   └── spark/               # Scoping engine (Haiku via OpenRouter)
+├── llms.txt/                # Agent-readable index (llmstxt.org)
+├── llms-full.txt/           # Whole site as markdown, one fetch
+├── robots.ts                # Generated robots.txt — AI crawlers named explicitly
+├── sitemap.ts               # /en + /pt, with hreflang alternates
 └── globals.css              # shadcn HSL variables — Ink/Paper/Violet brand v1
 
 components/
-├── Header.tsx · Hero.tsx · Spark.tsx · Work.tsx
+├── Header.tsx · Hero.tsx · Spark.tsx · Work.tsx · Capabilities.tsx
 ├── Approach.tsx · About.tsx · Contact.tsx · Footer.tsx
 └── ui/                      # shadcn primitives
 
 lib/
+├── site-data.ts             # Single source: company, products, capabilities
+├── structured-data.ts       # schema.org @graph builders
 ├── rate-limit.ts            # Shared factory (Upstash + in-memory fallback)
 ├── postmark.ts              # Postmark HTTP API wrapper
 ├── html.ts                  # escapeHtml (shared between routes)

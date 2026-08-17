@@ -79,9 +79,23 @@ Localized URLs: `http://localhost:3000/en` (default) and `http://localhost:3000/
 
 ### SEO / Analytics
 - Metadata is generated per-locale in `app/[locale]/layout.tsx` (`generateMetadata` reads the `metadata` namespace) and re-exported per-page in `page.tsx`. `metadataBase` and `alternates.languages` are set so OG/canonical URLs resolve correctly.
-- The root layout injects: GTM container `GTM-KPXTTSRQ`, an Organization JSON-LD block (with EN/PT in `availableLanguage`), and a noscript GTM iframe. Update the GTM ID and JSON-LD `description` there.
+- The locale layout injects: GTM container `GTM-KPXTTSRQ`, the JSON-LD `@graph` (see below), and a noscript GTM iframe. Update the GTM ID there.
 - **Spark + Contact funnel events** are pushed to `window.dataLayer` via `lib/analytics.ts` (`track(event, props)`). Funnel: `spark_view` → `spark_submit` → (`spark_plan_rendered` | `spark_refusal` | `spark_error`) → `spark_talk_clicked` → `contact_submit` → `contact_success`. All events carry `locale`. Contact-side events also carry `from_spark` **and** `from_capabilities` so the funnel report can tell the two in-page doors apart from cold-start submits. Both are derived from a single `prefillSourceRef` in `Contact.tsx` — the `contact-prefill` sessionStorage payload carries a `source` field (`'spark' | 'capabilities'`), and only recognised sources are attributed. The Capabilities section additionally emits `capabilities_view` and a `cta_click` with `location: 'capabilities'`. Configure tags + triggers in the GTM container; nothing in the codebase needs to change to add a new GA4/PostHog/Plausible target — they all consume `dataLayer`.
-- `app/sitemap.ts` generates the sitemap; `app/[locale]/opengraph-image.tsx` produces the dynamic OG image. The OG image is rendered server-side (edge runtime) and currently hardcodes English copy — it does not localize per route.
+- `app/sitemap.ts` generates the sitemap — **two URLs only** (`/en`, `/pt`), each carrying `alternates.languages`. This is a one-pager; `/about`, `/services`, `/projects`, `/contact` are in-page anchors, not routes, and must not be re-added to the sitemap (they 404). `app/[locale]/opengraph-image.tsx` produces the dynamic OG image, rendered server-side (edge runtime); it hardcodes English copy and does not localize per route.
+
+### Agent-readable surface
+Four machine-first endpoints exist so an LLM crawler or agent can capture the work without parsing the rendered app shell. All are prerendered static at build time and live **outside** `[locale]` (EN only — EN is the master copy):
+
+- **`/llms.txt`** (`app/llms.txt/route.ts`) — llmstxt.org-style index: summary blockquote, one linked bullet per product, one per capability, plus site/contact links.
+- **`/llms-full.txt`** (`app/llms-full.txt/route.ts`) — the entire one-pager as clean markdown (capabilities → work → approach → about → contact). Linked from `<head>` via `<link rel="alternate" type="text/markdown">`.
+- **`/robots.txt`** (`app/robots.ts`) — generated, not static. It names the AI crawlers explicitly (`GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`, …) with `Allow: /` so the intent to be read by assistants is auditable. **`public/robots.txt` was deliberately deleted** — a static file of that name silently shadows this route, so do not recreate it.
+- **`/sitemap.xml`** — see above.
+
+Both `llms*.txt` routes `import en from '@/messages/en.json'` directly rather than calling `getTranslations`: route handlers sit outside the `[locale]` segment and have no next-intl request scope. `hero.title` carries next-intl rich-text placeholders (`<accent>`, `<break>`) — `llms-full.txt` strips them via a local `stripRichTextTags`; any new rich-text key needs the same treatment.
+
+**`lib/site-data.ts` is the single source of truth** for company identity (`SITE`), the 5 products, and the 4 capability lines — consumed by `Work.tsx`, `Capabilities.tsx`, both `llms*.txt` routes, `app/robots.ts`, `app/sitemap.ts` and `lib/structured-data.ts`. Adding a product now means editing `lib/site-data.ts` + both `messages/*.json` (**not** `Work.tsx`). Lucide icons stay in `Capabilities.tsx` behind a key→icon `icons` map, since a React component can't live in a data module imported by route handlers.
+
+**`lib/structured-data.ts`** builds the JSON-LD `@graph` emitted by `app/[locale]/layout.tsx`: `Organization` (with `legalName`, CNPJ as a `PropertyValue` `identifier`, `sameAs` profiles, `knowsAbout` from every stack entry, and a `hasOfferCatalog` of the four capabilities as `Service` offers), `WebSite`, and an `ItemList` of the 5 products as `SoftwareApplication` nodes. Nodes cross-reference by `@id` (`#organization`, `#website`, `#work`). Copy is passed in from `getTranslations`, so the graph localizes per route; validate changes at <https://validator.schema.org/>.
 
 ## Reference docs in repo
 
