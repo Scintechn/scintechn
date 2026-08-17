@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type MouseEvent } from 'react';
 import { Activity, ArrowRight, Boxes, Plug, Workflow } from 'lucide-react';
 import { track } from '@/lib/analytics';
 
@@ -54,8 +54,22 @@ export default function Capabilities() {
   }, [isInView, locale]);
 
   // Mirrors Spark's "Talk to us about this →" bridge: write a localized
-  // pre-fill to sessionStorage, then move the hash so <Contact /> drains it.
-  const handleCtaClick = () => {
+  // pre-fill to sessionStorage so <Contact /> drains it on hashchange.
+  // Unlike Spark's <button>, this is a real anchor — its default action
+  // already produces the hashchange, so we only nudge it manually in the
+  // one case the browser won't (hash is already #contact).
+  const handleCtaClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    // Cmd/Ctrl/shift-click and middle-click open a new tab or window; leave
+    // the current one alone rather than scrolling it and burning the prefill.
+    if (
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.button !== 0
+    ) {
+      return;
+    }
     track('cta_click', {
       location: 'capabilities',
       label: 'talk_requirement',
@@ -74,8 +88,6 @@ export default function Capabilities() {
       // Hashchange wouldn't fire if we're already there — dispatch a synthetic
       // event so Contact picks up the prefill anyway.
       window.dispatchEvent(new HashChangeEvent('hashchange'));
-    } else {
-      window.location.hash = '#contact';
     }
   };
 

@@ -1,6 +1,7 @@
 # Capabilities section — draft
 
-**Status:** draft for approval. Nothing implemented yet.
+**Status:** implemented on `feat/capabilities-section`. Kept for the copy rationale
+(§2–§5) and the follow-ups in §10, which are not built.
 **Date:** 2026-08-17
 **Scope:** one new page section (`#capabilities`), nav entry, EN/PT copy, analytics events.
 
@@ -274,7 +275,7 @@ funnel report can separate the doors.
 
 ---
 
-## 11. Implementation phases (not started)
+## 11. Implementation phases (all shipped)
 
 | Phase | Work | Verify |
 |---|---|---|

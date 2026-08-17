@@ -41,9 +41,11 @@ export default function Contact() {
     formState: { errors },
     reset,
     setValue,
+    getValues,
   } = useForm<FormData>();
 
-  // Bridge from <Spark /> "Talk to us about this →": Spark writes a localized
+  // Bridge from the in-page CTAs (<Spark /> "Talk to us about this →" and
+  // <Capabilities /> "Talk about your requirement"): each writes a localized
   // pre-fill message to sessionStorage and points the URL hash to #contact.
   // We drain it both on mount (cross-page nav) and on hashchange (same-page nav).
   useEffect(() => {
@@ -59,10 +61,16 @@ export default function Contact() {
           typeof (parsed as { message: unknown }).message === 'string'
         ) {
           const obj = parsed as { message: string; source?: unknown };
-          setValue('message', obj.message, { shouldDirty: true });
-          // Only attribute when the writer tagged itself with a source we
-          // know. An untagged or unrecognised writer still gets its prefill,
-          // it just doesn't pollute either funnel signal.
+          // Never clobber what the visitor already typed. With two writers
+          // producing different text, a second CTA click would otherwise
+          // silently replace a message they'd been editing.
+          if (!getValues('message')?.trim()) {
+            setValue('message', obj.message, { shouldDirty: true });
+          }
+          // Attribute regardless of whether the text landed — the visitor
+          // still arrived through that section's CTA. Only tagged, recognised
+          // sources count, so an untagged writer can coexist without
+          // polluting either funnel signal.
           if (isPrefillSource(obj.source)) prefillSourceRef.current = obj.source;
         }
         sessionStorage.removeItem('contact-prefill');
@@ -76,7 +84,7 @@ export default function Contact() {
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
-  }, [setValue]);
+  }, [setValue, getValues]);
 
   useEffect(() => {
     if (isInView) track('contact_view', { locale });
