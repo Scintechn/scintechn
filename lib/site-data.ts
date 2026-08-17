@@ -15,7 +15,12 @@
  */
 
 export const SITE = {
-  baseUrl: 'https://scintechn.com',
+  /**
+   * The canonical host is `www` — Vercel 307-redirects the apex to it, so every
+   * absolute URL here (canonical, OG, sitemap, JSON-LD @id) must use `www` or
+   * it advertises a redirect and splits ranking signals.
+   */
+  baseUrl: 'https://www.scintechn.com',
   name: 'Scintechn',
   legalName: 'Scint Technologia Serviços Ltda',
   cnpj: '36.955.612/0001-85',
