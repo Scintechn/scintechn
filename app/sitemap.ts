@@ -1,23 +1,27 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
+import { SITE } from '@/lib/site-data';
+
+/**
+ * The site is a single page per locale — there are no /about, /services,
+ * /projects or /contact routes (those are in-page anchors), so the sitemap
+ * lists exactly the two URLs that resolve.
+ *
+ * lastModified is fixed at module scope so the value is stable for a given
+ * build instead of changing on every request.
+ */
+
+const LAST_MODIFIED = new Date();
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://scintechn.com';
-  const locales = ['pt', 'en'];
+  const languages = Object.fromEntries(
+    SITE.locales.map((locale) => [locale, `${SITE.baseUrl}/${locale}`]),
+  );
 
-  const routes = ['', '/about', '/services', '/projects', '/contact'];
-
-  const sitemap: MetadataRoute.Sitemap = [];
-
-  locales.forEach((locale) => {
-    routes.forEach((route) => {
-      sitemap.push({
-        url: `${baseUrl}/${locale}${route}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: route === '' ? 1 : 0.8,
-      });
-    });
-  });
-
-  return sitemap;
+  return SITE.locales.map((locale) => ({
+    url: `${SITE.baseUrl}/${locale}`,
+    lastModified: LAST_MODIFIED,
+    changeFrequency: 'weekly',
+    priority: 1,
+    alternates: { languages },
+  }));
 }

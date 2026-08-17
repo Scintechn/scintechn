@@ -6,40 +6,17 @@ import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, type MouseEvent } from 'react';
 import { Activity, ArrowRight, Boxes, Plug, Workflow } from 'lucide-react';
 import { track } from '@/lib/analytics';
+import { capabilities, type CapabilityKey } from '@/lib/site-data';
 
-type CapabilityKey = 'product' | 'automation' | 'integrations' | 'run';
-
-type Capability = {
-  key: CapabilityKey;
-  Icon: typeof Boxes;
-  stack: string[];
+// The capability data itself lives in lib/site-data.ts so the agent-readable
+// surfaces can render it too; icons stay here because a React component can't
+// travel in a plain data module.
+const icons: Record<CapabilityKey, typeof Boxes> = {
+  product: Boxes,
+  automation: Workflow,
+  integrations: Plug,
+  run: Activity,
 };
-
-// Tool names are identical across locales, so the chips live here rather than
-// in messages/*.json — same pattern as products[] in Work.tsx. Keeps a
-// frequently-edited list out of the two files that must stay key-identical.
-const capabilities: Capability[] = [
-  {
-    key: 'product',
-    Icon: Boxes,
-    stack: ['Next.js', 'TypeScript', 'PostgreSQL', 'Vercel AI SDK', 'OpenRouter', 'Stripe'],
-  },
-  {
-    key: 'automation',
-    Icon: Workflow,
-    stack: ['n8n', 'Make', 'Salesforce Agentforce', 'GoHighLevel', 'Webhooks & APIs'],
-  },
-  {
-    key: 'integrations',
-    Icon: Plug,
-    stack: ['Stripe Connect', 'WhatsApp / Evolution API', 'Salesforce', 'Supabase', 'REST'],
-  },
-  {
-    key: 'run',
-    Icon: Activity,
-    stack: ['Vercel', 'CI/CD', 'Playwright', 'Vitest', 'Monitoring'],
-  },
-];
 
 export default function Capabilities() {
   const t = useTranslations('capabilities');
@@ -112,35 +89,38 @@ export default function Capabilities() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {capabilities.map(({ key, Icon, stack }, index) => (
-            <motion.article
-              key={key}
-              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-              animate={isInView || reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.1 }}
-              className="flex flex-col rounded-xl border border-border bg-card p-6 md:p-8"
-            >
-              <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-primary/10 text-primary mb-5">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                {t(`items.${key}.title`)}
-              </h3>
-              <p className="text-base text-muted-foreground leading-relaxed mb-6 flex-grow">
-                {t(`items.${key}.description`)}
-              </p>
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
-                {stack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="font-mono inline-flex items-center rounded-md bg-secondary px-2.5 py-0.5 text-[11px] font-medium text-secondary-foreground"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </motion.article>
-          ))}
+          {capabilities.map(({ key, stack }, index) => {
+            const Icon = icons[key];
+            return (
+              <motion.article
+                key={key}
+                initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+                animate={isInView || reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.1 }}
+                className="flex flex-col rounded-xl border border-border bg-card p-6 md:p-8"
+              >
+                <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-primary/10 text-primary mb-5">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {t(`items.${key}.title`)}
+                </h3>
+                <p className="text-base text-muted-foreground leading-relaxed mb-6 flex-grow">
+                  {t(`items.${key}.description`)}
+                </p>
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
+                  {stack.map((tech) => (
+                    <span
+                      key={tech}
+                      className="font-mono inline-flex items-center rounded-md bg-secondary px-2.5 py-0.5 text-[11px] font-medium text-secondary-foreground"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
 
         <motion.div

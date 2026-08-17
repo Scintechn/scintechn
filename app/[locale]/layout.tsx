@@ -4,6 +4,7 @@ import { Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/next';
+import { siteGraph } from '@/lib/structured-data';
 import '../globals.css';
 
 const GTM_ID = 'GTM-KPXTTSRQ';
@@ -88,12 +89,25 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   const messages = await getMessages();
+  const tMeta = await getTranslations({ locale, namespace: 'metadata' });
+  const tWork = await getTranslations({ locale, namespace: 'work' });
+  const tCapabilities = await getTranslations({ locale, namespace: 'capabilities' });
+
+  const jsonLd = siteGraph({
+    locale,
+    title: tMeta('title'),
+    description: tMeta('description'),
+    tWork,
+    tCapabilities,
+  });
 
   return (
     <html lang={locale}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/brand/scintechn-favicon-32.svg" />
         <link rel="apple-touch-icon" href="/brand/scintechn-app-icon-512.svg" />
+        {/* Discovery hint for AI agents: the whole site as clean markdown. */}
+        <link rel="alternate" type="text/markdown" href="/llms-full.txt" />
         <Script id="gtm-init" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -103,24 +117,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </Script>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: 'Scintechn',
-              alternateName: 'Scintech Services',
-              url: 'https://scintechn.com',
-              logo: 'https://scintechn.com/brand/scintechn-lockup-light.svg',
-              description:
-                'AI software house. We design, build and ship AI-powered SaaS products — from requirement to working software, in weeks.',
-              contactPoint: {
-                '@type': 'ContactPoint',
-                email: 'contact@scintechn.com',
-                contactType: 'sales',
-                availableLanguage: ['en', 'pt'],
-              },
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className={`${interTight.variable} ${jetbrainsMono.variable} antialiased`}>
