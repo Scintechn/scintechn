@@ -1,6 +1,7 @@
 {
   "nav": {
     "work": "Projetos",
+    "capabilities": "Capacidades",
     "approach": "Método",
     "about": "Sobre",
     "startProject": "Iniciar um projeto"
@@ -50,6 +51,32 @@
         "description": "Plataforma de inglês em estágio inicial para alunos brasileiros e portugueses, com professores nativos e experiência tri-lingual (EN / pt-BR / pt-PT)."
       }
     }
+  },
+  "capabilities": {
+    "eyebrow": "Capacidades",
+    "title": "Construído, integrado, automatizado e mantido no ar.",
+    "subtitle": "Quatro capacidades, um time de entrega. A maioria dos projetos usa mais de uma — escopamos juntas para que nada caia no vão entre fornecedores.",
+    "items": {
+      "product": {
+        "title": "Engenharia de Produto com IA",
+        "description": "SaaS multi-tenant com IA dentro do produto, não pendurada nele. Autenticação, cobrança, tenancy, dashboards — as partes que todo produto precisa, já resolvidas e entregues cinco vezes."
+      },
+      "automation": {
+        "title": "Automação & Agentes de IA",
+        "description": "O trabalho que acontece entre as suas ferramentas — distribuição de leads, follow-up, tratamento de documentos, relatórios, escalonamento. Construído como fluxos no n8n ou Make, ou como agentes dentro do CRM onde seu time já trabalha."
+      },
+      "integrations": {
+        "title": "Integrações",
+        "description": "Pagamentos, mensagens e CRM ligados em uma operação só. Dinheiro pelo Stripe, conversa pelo WhatsApp, pipeline pelo Salesforce ou GoHighLevel — um sistema de registro em vez de cinco que se contradizem."
+      },
+      "run": {
+        "title": "Operação & Suporte",
+        "description": "Entregar é o começo. Fazemos deploy, monitoramos, assumimos o runbook de erros e seguimos evoluindo em cadência mensal — para que nada quebre em silêncio quando as ferramentas ao redor mudam."
+      }
+    },
+    "footnote": "A maioria dos projetos começa com uma capacidade e cresce para as outras.",
+    "cta": "Conversar sobre o seu requisito",
+    "ctaPrefill": "Gostaria de conversar sobre um requisito.\n\nO que precisamos:\n"
   },
   "approach": {
     "eyebrow": "Método",

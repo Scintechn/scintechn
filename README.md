@@ -22,6 +22,7 @@ The portfolio rendered on the site:
 
 - **Bilingual** EN (default, worldwide) / PT (secondary), via `next-intl` with `localePrefix: 'always'`.
 - **Spark** (`/api/spark` + `<Spark />` section): a hero-adjacent engagement device that turns a one-line product idea into a structured 4-week build plan via Claude Haiku 4.5 (OpenRouter). Every plan includes a **Cost of Inaction** estimate — a server-locked currency-banded projection of what waiting costs the business, anchored to a numeric calculation chain. Plan emails to `RECIPIENT_EMAIL` and to the lead. Per-IP rate limit (5/hr), daily $5 budget cap, multi-layer prompt-injection + hallucination defenses (currency lock, output canary, schema validation with non-zero digit requirement, single-retry on validation failure). See [`docs/spark-plan.md`](docs/spark-plan.md) for the full design and threat model.
+- **Capabilities** (`<Capabilities />` section): the company's delivery surface stated as four composable capabilities — AI Product Engineering, Automation & AI Agents (n8n, Make, Salesforce Agentforce, GoHighLevel), Integrations, and Run & Support. See [`docs/capabilities-section-draft.md`](docs/capabilities-section-draft.md) for the copy rationale and follow-ups.
 - **Contact form** (`/api/contact`): RHF + Postmark, rate-limited, honeypot + CRLF/HTML hardening.
 - **Dynamic OG image** rendered server-side at `/[locale]/opengraph-image`.
 - **Sitemap + JSON-LD Organization** for SEO.

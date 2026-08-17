@@ -14,6 +14,14 @@ type FormData = {
   website?: string; // honeypot — must remain empty
 };
 
+// Sections that can pre-fill this form via the shared sessionStorage bridge.
+const PREFILL_SOURCES = ['spark', 'capabilities'] as const;
+type PrefillSource = (typeof PREFILL_SOURCES)[number];
+
+function isPrefillSource(value: unknown): value is PrefillSource {
+  return PREFILL_SOURCES.includes(value as PrefillSource);
+}
+
 export default function Contact() {
   const t = useTranslations('contact');
   const locale = useLocale();
@@ -21,11 +29,11 @@ export default function Contact() {
   const isInView = useInView(ref, { once: true, amount: 0.3 });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  // Tracks whether the current message field was populated by Spark's
-  // "Talk to us about this →" CTA. Used to label submit events with
-  // from_spark=true so the funnel report can distinguish Spark-attributed
-  // contact submits from cold-start submits.
-  const fromSparkRef = useRef(false);
+  // Tracks which section pre-filled the current message field, if any —
+  // Spark's "Talk to us about this →" or the Capabilities CTA. Used to label
+  // submit events so the funnel report can tell the two doors apart from
+  // cold-start submits.
+  const prefillSourceRef = useRef<PrefillSource | null>(null);
 
   const {
     register,
@@ -33,9 +41,11 @@ export default function Contact() {
     formState: { errors },
     reset,
     setValue,
+    getValues,
   } = useForm<FormData>();
 
-  // Bridge from <Spark /> "Talk to us about this →": Spark writes a localized
+  // Bridge from the in-page CTAs (<Spark /> "Talk to us about this →" and
+  // <Capabilities /> "Talk about your requirement"): each writes a localized
   // pre-fill message to sessionStorage and points the URL hash to #contact.
   // We drain it both on mount (cross-page nav) and on hashchange (same-page nav).
   useEffect(() => {
@@ -51,11 +61,17 @@ export default function Contact() {
           typeof (parsed as { message: unknown }).message === 'string'
         ) {
           const obj = parsed as { message: string; source?: unknown };
-          setValue('message', obj.message, { shouldDirty: true });
-          // Only attribute to Spark if the writer explicitly tagged it.
-          // Lets a future non-Spark prefill writer coexist without
-          // accidentally polluting the from_spark funnel signal.
-          if (obj.source === 'spark') fromSparkRef.current = true;
+          // Never clobber what the visitor already typed. With two writers
+          // producing different text, a second CTA click would otherwise
+          // silently replace a message they'd been editing.
+          if (!getValues('message')?.trim()) {
+            setValue('message', obj.message, { shouldDirty: true });
+          }
+          // Attribute regardless of whether the text landed — the visitor
+          // still arrived through that section's CTA. Only tagged, recognised
+          // sources count, so an untagged writer can coexist without
+          // polluting either funnel signal.
+          if (isPrefillSource(obj.source)) prefillSourceRef.current = obj.source;
         }
         sessionStorage.removeItem('contact-prefill');
       } catch {
@@ -68,7 +84,7 @@ export default function Contact() {
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
-  }, [setValue]);
+  }, [setValue, getValues]);
 
   useEffect(() => {
     if (isInView) track('contact_view', { locale });
@@ -78,8 +94,12 @@ export default function Contact() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
-    const fromSpark = fromSparkRef.current;
-    track('contact_submit', { locale, from_spark: fromSpark });
+    const source = prefillSourceRef.current;
+    const attribution = {
+      from_spark: source === 'spark',
+      from_capabilities: source === 'capabilities',
+    };
+    track('contact_submit', { locale, ...attribution });
 
     try {
       const response = await fetch('/api/contact', {
@@ -90,23 +110,23 @@ export default function Contact() {
 
       if (response.ok) {
         setSubmitStatus('success');
-        track('contact_success', { locale, from_spark: fromSpark });
-        // Clear the from-spark flag once consumed so a follow-up submit on
-        // the same session doesn't get incorrectly attributed.
-        fromSparkRef.current = false;
+        track('contact_success', { locale, ...attribution });
+        // Clear the attribution once consumed so a follow-up submit on the
+        // same session doesn't get incorrectly attributed.
+        prefillSourceRef.current = null;
         reset();
         setTimeout(() => setSubmitStatus('idle'), 6000);
       } else {
         setSubmitStatus('error');
         track('contact_error', {
           locale,
-          from_spark: fromSpark,
+          ...attribution,
           http_status: response.status,
         });
       }
     } catch {
       setSubmitStatus('error');
-      track('contact_error', { locale, from_spark: fromSpark, http_status: 0 });
+      track('contact_error', { locale, ...attribution, http_status: 0 });
     } finally {
       setIsSubmitting(false);
     }

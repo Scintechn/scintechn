@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Spark from '@/components/Spark';
 import Work from '@/components/Work';
+import Capabilities from '@/components/Capabilities';
 import Approach from '@/components/Approach';
 import About from '@/components/About';
 import Contact from '@/components/Contact';
@@ -43,6 +44,7 @@ export default async function Home({
         <Hero />
         <Spark />
         <Work />
+        <Capabilities />
         <Approach />
         <About />
         <Contact />

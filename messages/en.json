@@ -1,6 +1,7 @@
 {
   "nav": {
     "work": "Work",
+    "capabilities": "Capabilities",
     "approach": "Approach",
     "about": "About",
     "startProject": "Start a project"
@@ -50,6 +51,32 @@
         "description": "Early-stage English-learning platform for Brazilian and Portuguese students, with native teachers and tri-lingual experience (EN / pt-BR / pt-PT)."
       }
     }
+  },
+  "capabilities": {
+    "eyebrow": "Capabilities",
+    "title": "Built, integrated, automated, and kept running.",
+    "subtitle": "Four capabilities, one delivery team. Most engagements use more than one — we scope them together so nothing falls between vendors.",
+    "items": {
+      "product": {
+        "title": "AI Product Engineering",
+        "description": "Multi-tenant SaaS with AI in the product, not bolted onto it. Auth, billing, tenancy, dashboards — the parts every product needs, already solved and shipped five times over."
+      },
+      "automation": {
+        "title": "Automation & AI Agents",
+        "description": "The work that happens between your tools — lead routing, follow-up, document handling, reporting, escalation. Built as workflows on n8n or Make, or as agents working inside the CRM your team already lives in."
+      },
+      "integrations": {
+        "title": "Integrations",
+        "description": "Payments, messaging and CRM wired into one operation. Money through Stripe, conversation through WhatsApp, pipeline through Salesforce or GoHighLevel — one system of record instead of five that disagree."
+      },
+      "run": {
+        "title": "Run & Support",
+        "description": "Shipping is the start. We deploy, monitor, own the error runbook and keep improving on a monthly cadence — so nothing quietly breaks when the tools around it change."
+      }
+    },
+    "footnote": "Most engagements start with one capability and grow into the others.",
+    "cta": "Talk about your requirement",
+    "ctaPrefill": "I'd like to talk about a requirement.\n\nWhat we need:\n"
   },
   "approach": {
     "eyebrow": "Approach",
